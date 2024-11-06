@@ -1,3 +1,5 @@
+import ArrowRight from "./ArrowRight";
+import Check from "./Check";
 import Globe from "./Globe";
 import Home from "./Home";
 import Kitty from "./Kitty";
@@ -20,4 +22,6 @@ export {
   Post,
   Search,
   Shorts,
+  ArrowRight,
+  Check,
 };

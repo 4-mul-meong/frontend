@@ -29,5 +29,8 @@
   "engines": {
     "node": ">=18"
   },
-  "name": "with-tailwind"
+  "name": "with-tailwind",
+  "dependencies": {
+    "@use-funnel/browser": "^0.0.7"
+  }
 }
