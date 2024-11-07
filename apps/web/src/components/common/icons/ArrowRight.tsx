@@ -1,10 +1,10 @@
-import React from "react";
+import type { IconProps } from "./@type";
 
-export default function Arrow() {
+export default function ArrowRight({ width = 78, height = 82 }: IconProps) {
   return (
     <svg
-      width="78"
-      height="82"
+      width={width}
+      height={height}
       viewBox="0 0 78 82"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

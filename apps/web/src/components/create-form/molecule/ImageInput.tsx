@@ -1,42 +1,73 @@
 "use client";
-import Image from "next/image";
-import React, { useState } from "react";
+import { useState, useMemo } from "react";
+import { ImagePreview, PlaceHolder, UploadButton } from "../atoms";
+
+// map 고유한 키 값 생성
+interface Preview {
+  url: string;
+  key: string;
+}
 
 function ImageInput() {
-  const [images, setImages] = useState<string[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<Preview[]>([]);
+  const initialPlaceholders = 4; // 고정 개수
+  const maxUploadCount = 10; // 이미지 최대 개수
 
+  // initialPlaceholders 배열 키 값 생성
+  const placeholderKeys = useMemo(
+    () =>
+      Array.from({ length: initialPlaceholders }, () =>
+        Math.random().toString(36).substr(2, 9),
+      ),
+    [],
+  );
+
+  //이미지 미리보기 로직
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files) {
-      const imageUrls = Array.from(files).map((file) =>
-        URL.createObjectURL(file),
+      const fileArray = Array.from(files);
+      const newPreviewUrls = fileArray.map((file) => ({
+        url: URL.createObjectURL(file), //파일 객체를 메모리 url 변환
+        key: file.name || String(file.lastModified),
+      }));
+
+      setPreviewUrls((prevUrls) =>
+        [...prevUrls, ...newPreviewUrls].slice(0, maxUploadCount),
       );
-      setImages(imageUrls); // 선택한 이미지 URL을 상태에 저장
+
+      return () =>
+        // 메모리 누수 방지 로직
+        newPreviewUrls.forEach((preview) => URL.revokeObjectURL(preview.url));
     }
+  };
+  // 미리보기 삭제 로직
+  const handleDelete = (url: string) => {
+    setPreviewUrls((prevUrls) =>
+      prevUrls.filter((preview) => preview.url !== url),
+    );
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <label htmlFor="imageUpload" className="font-bold">
-        Upload Images
-      </label>
-      <input
-        type="file"
-        id="imageUpload"
-        multiple
-        accept="image/*"
-        onChange={handleImageChange}
-        className="py-2"
-      />
-      <div className="flex gap-4 flex-wrap mt-4">
-        {images.map((imageUrl) => (
-          <div key={imageUrl} className="relative">
-            <Image
-              src={imageUrl}
-              alt={`Preview ${imageUrl + 1}`}
-              className="w-32 h-32 object-cover rounded-lg"
+    <div className="flex flex-col items-center w-full">
+      {/* 파일업로드 */}
+      <UploadButton onChange={handleImageChange} />
+
+      <div className="py-4 flex gap-3 flex-wrap justify-between">
+        {/* 고정 플레이스 값 */}
+        {Array.from({ length: initialPlaceholders }).map((_, index) => {
+          return index < previewUrls.length ? (
+            <ImagePreview
+              key={previewUrls[index].key}
+              url={previewUrls[index].url}
+              onDelete={handleDelete}
             />
-          </div>
+          ) : (
+            <PlaceHolder key={placeholderKeys[index]} />
+          );
+        })}
+        {previewUrls.slice(initialPlaceholders).map(({ url, key }) => (
+          <ImagePreview key={key} url={url} onDelete={handleDelete} />
         ))}
       </div>
     </div>

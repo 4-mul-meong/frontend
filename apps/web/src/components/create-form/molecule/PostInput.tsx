@@ -1,5 +1,3 @@
-import React from "react";
-
 function PostInput() {
   return (
     // 포스트
@@ -11,6 +9,7 @@ function PostInput() {
         wrap="hard"
         rows={4}
         cols={50}
+        placeholder="내용을 입력해주세요"
         className="w-full h-[116px] rounded-lg outline-none ring-0 focus:outline-none focus:ring-0  focus:bg-[#F1F4F9]"
       />
     </div>

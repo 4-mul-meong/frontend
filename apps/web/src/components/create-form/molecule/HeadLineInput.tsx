@@ -1,5 +1,3 @@
-import React from "react";
-
 function HeadLineInput() {
   return (
     // 제목
@@ -9,6 +7,7 @@ function HeadLineInput() {
         type="text"
         id="Headline"
         name="Headline"
+        placeholder="제목을 입력해주세요."
         className="w-full h-[55px] rounded-lg items-center outline-none ring-0 focus:outline-none focus:ring-0 focus:bg-[#F1F4F9]"
       />
     </div>

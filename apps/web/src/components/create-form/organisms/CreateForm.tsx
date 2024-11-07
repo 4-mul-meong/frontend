@@ -1,28 +1,19 @@
-import React from "react";
-import HeadLineInput from "../molecule/HeadLineInput";
-import PostInput from "../molecule/PostInput";
-import TagsInput from "../molecule/TagsInput";
-import ImageInput from "../molecule/ImageInput";
+import FormButton from "../atoms/FormButton";
+import { HeadLineInput, ImageInput, PostInput, TagsInput } from "../molecule";
 
 function CreateForm() {
   return (
-    <div className="relative w-[600px] bg-white ">
+    <div className=" w-full bg-[#D7E8FF] h-auto px-[28px]">
       <form
-        className="pt-[30px] flex flex-col gap-8 px-7 w-full bg-[#D7E8FF] "
+        method="POST"
+        className="pt-[25px] flex flex-col gap-[25px] pb-[80px]"
         action=""
       >
         <HeadLineInput />
         <PostInput />
         <TagsInput />
         <ImageInput />
-        <div className="absolute bottom-0 left-0 w-full px-7">
-          <button
-            className="text-[20px] bg-[#47D0BF] w-full h-[64px] items-center"
-            type="submit"
-          >
-            Upload now
-          </button>
-        </div>
+        <FormButton />
       </form>
     </div>
   );
