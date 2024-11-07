@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { Check } from "@/components/common/icons";
 
 function TagsInput() {
   const [tags, setTags] = useState<string[]>([]);
@@ -14,6 +13,10 @@ function TagsInput() {
     }
   };
 
+  const removeTag = (tagToRemove: string) => {
+    setTags(tags.filter((tag) => tag !== tagToRemove));
+  };
+
   return (
     <div className="flex flex-col gap-[10px]">
       <label htmlFor="Tags">Tags</label>
@@ -25,19 +28,24 @@ function TagsInput() {
         onChange={(e) => setInputValue(e.target.value)}
         onKeyDown={handleKeyDown}
         className="w-full h-[55px] rounded-lg items-center outline-none ring-0 focus:outline-none focus:ring-0 focus:bg-[#F1F4F9]"
-        placeholder="Enter 키로 태그 추가"
+        placeholder="태그를 입력해주세요."
       />
-
-      {/* 태그 목록 표시 */}
-      <div className="flex flex-wrap gap-2 mt-2">
+      <div className="mt-2 flex gap-3 flex-wrap">
         {tags.map((tag) => (
-          <span
+          <div
             key={tag}
-            className=" px-4 py-2 rounded-2xl text-[12px] border-2 border-[#217EFD] flex gap-[8px]"
+            className="text-[#217EFD] text-[12px] border-[1px] rounded-2xl border-solid border-[#217EFD] px-3 py-2 flex gap-[3px] items-center"
           >
-            <Check />
             {tag}
-          </span>
+            <button
+              type="button"
+              onClick={() => removeTag(tag)}
+              className=" text-[#217EFD] focus:outline-none"
+              aria-label="Remove Tag"
+            >
+              ×
+            </button>
+          </div>
         ))}
       </div>
     </div>

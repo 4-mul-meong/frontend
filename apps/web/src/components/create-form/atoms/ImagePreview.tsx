@@ -8,7 +8,7 @@ interface ImagePreviewProps {
 
 function ImagePreview({ url, onDelete }: ImagePreviewProps) {
   return (
-    <div className="relative w-[110px] h-[140px]">
+    <div className="relative w-[120px] h-[150px]">
       <Image
         src={url}
         alt="Selected preview"
