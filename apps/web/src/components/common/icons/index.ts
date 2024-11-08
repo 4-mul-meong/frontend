@@ -13,8 +13,18 @@ import Share from "./Share";
 import Shorts from "./Shorts";
 import Save from "./Save";
 import Ellipsis from "./Ellipsis";
+import ArrowRight from "./ArrowRight";
+import Check from "./Check";
+import DeleteButton from "./DeleteButton";
+import DownloadImage from "./DownloadImage";
+import PushImage from "./PushImage";
 
 export {
+  ArrowRight,
+  Check,
+  DeleteButton,
+  DownloadImage,
+  PushImage,
   Globe,
   Home,
   Kitty,
