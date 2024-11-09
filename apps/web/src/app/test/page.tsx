@@ -1,11 +1,11 @@
 import React from "react";
-import CreateForm from "@/components/create-form/organisms/CreateForm";
 import { CommonLayout } from "@/components/common/molecules";
+import FeedForm from "@/components/feedform/organisms/FeedForm";
 
 function page() {
   return (
     <CommonLayout.Contents className="">
-      <CreateForm />
+      <FeedForm />
     </CommonLayout.Contents>
   );
 }
