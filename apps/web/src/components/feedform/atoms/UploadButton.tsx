@@ -1,3 +1,4 @@
+import React from "react";
 import { DownloadImage } from "@/components/common/icons";
 
 interface UploadButtonProps {
@@ -7,18 +8,17 @@ interface UploadButtonProps {
 function UploadButton({ onChange }: UploadButtonProps) {
   return (
     <label
-      htmlFor="imageform"
-      className="flex items-center justify-center gap-[12px] w-full h-[110px] border-4 border-dashed border-gray-300 rounded-2xl bg-[#F1F4F9] cursor-pointer"
+      htmlFor="img"
+      className="w-full flex items-center justify-center border-dotted border-2 border-gray-300 p-4 rounded-xl bg-[#F1F4F9] h-[110px]"
     >
       <DownloadImage />
-      <span>Upload attachment</span>
+      <span className="text-blue-500 font-medium">Upload attachment</span>
       <input
+        id="img"
         type="file"
-        id="imageform"
-        accept="image/*"
         multiple
-        className="hidden"
         onChange={onChange}
+        className="hidden"
       />
     </label>
   );

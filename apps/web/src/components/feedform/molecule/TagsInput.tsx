@@ -1,5 +1,6 @@
 import type { UseFormSetValue } from "react-hook-form";
-import type { FormData } from "../organisms/FeedForm"; // FeedForm 위치에 맞게 수정하세요
+import { Check } from "@/components/common/icons";
+import type { FormData } from "../organisms/FeedForm";
 
 interface TagsInputProps {
   tags: string[];
@@ -22,7 +23,7 @@ function TagsInput({ tags, setTags, setValue, error }: TagsInputProps) {
   };
 
   return (
-    <div>
+    <div className="flex flex-col gap-[12px]">
       <label htmlFor="tag" className="block text-sm font-bold">
         태그
       </label>
@@ -30,12 +31,16 @@ function TagsInput({ tags, setTags, setValue, error }: TagsInputProps) {
         id="tag"
         type="text"
         onKeyDown={handleAddTag}
-        className="w-full px-3 py-2 border rounded"
+        className="w-full h-[55px] rounded-lg bg-[#F1F4F9] border-2 px-2 focus:bg-[#D4D4D4]"
         placeholder="태그를 입력하고 엔터를 누르세요"
       />
       <div className="flex flex-wrap gap-2 mt-2">
         {tags.map((tag) => (
-          <span key={tag} className="px-2 py-1 text-sm bg-gray-200 rounded">
+          <span
+            key={tag}
+            className="text-[#217EFD] text-[12px] border-[1px] rounded-2xl border-[#217EFD] px-3 py-2 flex gap-[3px] items-center"
+          >
+            <Check />
             {tag}
           </span>
         ))}

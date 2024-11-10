@@ -1,15 +1,11 @@
-// FeedForm.tsx
 "use client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import ContentInput from "../molecule/ContentInput";
-import ImagesInput from "../molecule/ImagesInput";
-import TagsInput from "../molecule/TagsInput";
-import TitleInput from "../molecule/TitleInput";
+import { ContentInput, ImagesInput, TagsInput, TitleInput } from "../molecule";
 
-// formSchema 정의 및 FormData 타입 추론
+// z
 const formSchema = z.object({
   title: z
     .string()
@@ -44,30 +40,38 @@ function FeedForm() {
   const images = watch("images");
 
   // const onSubmit = () => {
-  //   // 데이터를 서버로 전송하는 로직을 여기에 추가하세요.
+  //   // 데이터를 서버로 전송하는 로직
   // };
 
   return (
-    <form
-      // onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col gap-4 p-4 border rounded-lg w-full max-w-lg"
-    >
-      <TitleInput register={register} error={errors.title} />
-      <ContentInput register={register} error={errors.content} />
-      <TagsInput
-        tags={tags}
-        setTags={setTags}
-        setValue={setValue}
-        error={errors.tags}
-      />
-      <ImagesInput images={images} setValue={setValue} error={errors.images} />
-      <button
-        type="submit"
-        className="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-600"
+    <div className="w-full bg-[#FDFCFC] h-auto px-[28px]">
+      <form
+        // onSubmit={handleSubmit(onSubmit)}
+        className="pt-[25px] flex flex-col gap-[25px] pb-[80px]"
+        method="POST"
+        encType="multipart/form-data"
       >
-        제출
-      </button>
-    </form>
+        <TitleInput register={register} error={errors.title} />
+        <ContentInput register={register} error={errors.content} />
+        <TagsInput
+          tags={tags}
+          setTags={setTags}
+          setValue={setValue}
+          error={errors.tags}
+        />
+        <ImagesInput
+          images={images}
+          setValue={setValue}
+          error={errors.images}
+        />
+        <button
+          type="submit"
+          className="text-[20px] bg-[#47D0BF] py-[18px] rounded-lg text-white text-center"
+        >
+          UPload now
+        </button>
+      </form>
+    </div>
   );
 }
 

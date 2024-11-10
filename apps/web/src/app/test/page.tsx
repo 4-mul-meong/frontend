@@ -1,10 +1,9 @@
-import React from "react";
 import { CommonLayout } from "@/components/common/molecules";
 import FeedForm from "@/components/feedform/organisms/FeedForm";
 
 function page() {
   return (
-    <CommonLayout.Contents className="">
+    <CommonLayout.Contents>
       <FeedForm />
     </CommonLayout.Contents>
   );
