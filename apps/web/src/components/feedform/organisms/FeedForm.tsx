@@ -5,7 +5,7 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ContentInput, ImagesInput, TagsInput, TitleInput } from "../molecule";
 
-// z
+// Zod 유효성 검사 스키마
 const formSchema = z.object({
   title: z
     .string()
@@ -21,13 +21,12 @@ const formSchema = z.object({
     .max(5, "이미지는 최대 5개까지 업로드할 수 있습니다"),
 });
 
-// FormData 타입을 외부에서 사용하도록 export
 export type FormData = z.infer<typeof formSchema>;
 
 function FeedForm() {
   const {
     register,
-    // handleSubmit,
+    handleSubmit,
     setValue,
     watch,
     formState: { errors },
@@ -39,14 +38,31 @@ function FeedForm() {
   const [tags, setTags] = useState<string[]>([]);
   const images = watch("images");
 
-  // const onSubmit = () => {
-  //   // 데이터를 서버로 전송하는 로직
-  // };
+  const onSubmit = async (data: FormData) => {
+    const formData = new FormData();
+    formData.append("title", data.title);
+    formData.append("content", data.content);
+    data.tags.forEach((tag) => formData.append("tags", tag));
+    data.images.forEach((image) => formData.append("images", image));
+
+    try {
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("데이터 전송에 실패했습니다.");
+      }
+    } catch {
+      // 에러 처리 로직 (예: 사용자에게 알림)
+    }
+  };
 
   return (
     <div className="w-full bg-[#FDFCFC] h-auto px-[28px]">
       <form
-        // onSubmit={handleSubmit(onSubmit)}
+        onSubmit={() => void handleSubmit(onSubmit)()} // void 처리로 Promise 반환 방지
         className="pt-[25px] flex flex-col gap-[25px] pb-[80px]"
         method="POST"
         encType="multipart/form-data"
@@ -68,7 +84,7 @@ function FeedForm() {
           type="submit"
           className="text-[20px] bg-[#47D0BF] py-[18px] rounded-lg text-white text-center"
         >
-          UPload now
+          Upload now
         </button>
       </form>
     </div>
