@@ -62,7 +62,10 @@ function FeedForm() {
   return (
     <div className="w-full bg-[#FDFCFC] h-auto px-[28px]">
       <form
-        onSubmit={() => void handleSubmit(onSubmit)()} // void 처리로 Promise 반환 방지
+        onSubmit={(e) => {
+          e.preventDefault(); // 페이지 리로드 방지
+          void handleSubmit(onSubmit)();
+        }}
         className="pt-[25px] flex flex-col gap-[25px] pb-[80px]"
         method="POST"
         encType="multipart/form-data"
