@@ -1,21 +1,18 @@
 import type { UseFormSetValue } from "react-hook-form";
-import { Check } from "@/components/common/icons";
 import type { FormData } from "../organisms/FeedForm";
 
 interface TagsInputProps {
   tags: string[];
-  setTags: React.Dispatch<React.SetStateAction<string[]>>;
   setValue: UseFormSetValue<FormData>;
   error?: { message?: string };
 }
 
-function TagsInput({ tags, setTags, setValue, error }: TagsInputProps) {
+function TagsInput({ tags, setValue, error }: TagsInputProps) {
   const handleAddTag = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter" && event.currentTarget.value) {
       event.preventDefault();
       const newTag = event.currentTarget.value.trim();
-      if (tags.length < 10) {
-        setTags([...tags, newTag]);
+      if (tags.length < 10 && newTag && !tags.includes(newTag)) {
         setValue("tags", [...tags, newTag]);
       }
       event.currentTarget.value = "";
@@ -38,9 +35,8 @@ function TagsInput({ tags, setTags, setValue, error }: TagsInputProps) {
         {tags.map((tag) => (
           <span
             key={tag}
-            className="text-[#217EFD] text-[12px] border-[1px] rounded-2xl border-[#217EFD] px-3 py-2 flex gap-[3px] items-center"
+            className="text-[#217EFD] text-[12px] border-[1px] rounded-2xl border-[#217EFD] px-3 py-2"
           >
-            <Check />
             {tag}
           </span>
         ))}

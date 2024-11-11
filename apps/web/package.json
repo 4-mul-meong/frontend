@@ -11,6 +11,7 @@
     "json-server": "json-server --watch db.json --port 3003"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.688.0",
     "@hookform/resolvers": "^3.9.1",
     "@repo/ui": "workspace:*",
     "next": "^14.2.10",

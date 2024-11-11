@@ -1,5 +1,4 @@
-"use client";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import type { UseFormSetValue } from "react-hook-form";
 import { PushImage } from "@/components/common/icons";
 import type { FormData } from "../organisms/FeedForm";
@@ -23,12 +22,8 @@ function ImagesInput({ images, setValue, error }: ImagesInputProps) {
   const INITIAL_PLACEHOLDERS = 4;
   const MAX_UPLOAD_COUNT = 10;
 
-  const placeholderKeys = useMemo(
-    () =>
-      Array.from({ length: INITIAL_PLACEHOLDERS }, () =>
-        Math.random().toString(36).substr(2, 9),
-      ),
-    [],
+  const placeholderKeys = Array.from({ length: INITIAL_PLACEHOLDERS }, () =>
+    Math.random().toString(36).substr(2, 9),
   );
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,11 +37,9 @@ function ImagesInput({ images, setValue, error }: ImagesInputProps) {
 
     setPreviewUrls((prevUrls) => [...prevUrls, ...newPreviews]);
     setValue("images", [...images, ...newFiles]);
-
-    return () =>
-      newPreviews.forEach((preview) => URL.revokeObjectURL(preview.url));
   };
 
+  // 이미지 삭제 시 URL 해제 및 상태 업데이트
   const handleDelete = (url: string, index: number) => {
     const updatedPreviews = previewUrls.filter(
       (preview) => preview.url !== url,
@@ -56,14 +49,22 @@ function ImagesInput({ images, setValue, error }: ImagesInputProps) {
     const updatedImages = [...images];
     updatedImages.splice(index, 1);
     setValue("images", updatedImages);
+
+    URL.revokeObjectURL(url);
   };
+
+  useEffect(() => {
+    return () => {
+      previewUrls.forEach((preview) => URL.revokeObjectURL(preview.url));
+    };
+  }, [previewUrls]);
 
   return (
     <div className="flex flex-col gap-4">
       {/* 파일 업로드 버튼 */}
       <UploadButton onChange={handleImageChange} />
 
-      {/* 이미지 미리보기 및 플레이스 홀더 */}
+      {/* 이미지 미리보기 및 플레이스홀더 */}
       <div className="flex flex-wrap gap-4 mt-4 justify-center">
         {previewUrls.map((preview, index) => (
           <PreviewImage
@@ -74,7 +75,7 @@ function ImagesInput({ images, setValue, error }: ImagesInputProps) {
             onDelete={handleDelete}
           />
         ))}
-        {/* 플레이스 홀더 */}
+        {/* 플레이스홀더 */}
         {Array.from({ length: INITIAL_PLACEHOLDERS - previewUrls.length }).map(
           (_, index) => (
             <div

@@ -5,13 +5,25 @@
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
-      "env": ["JSON_SERVER"]
+      "env": [
+        "JSON_SERVER",
+        "AWS_REGION",
+        "AMPLIFY_BUCKET",
+        "AWS_ACCESS_KEY_ID",
+        "AWS_SECRET_ACCESS_KEY"
+      ]
     },
     "lint": {},
     "type-check": {},
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "env": [
+        "AWS_REGION",
+        "AMPLIFY_BUCKET",
+        "AWS_ACCESS_KEY_ID",
+        "AWS_SECRET_ACCESS_KEY"
+      ]
     },
     "clean": {
       "cache": false

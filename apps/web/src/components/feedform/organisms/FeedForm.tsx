@@ -1,7 +1,6 @@
 "use client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ContentInput, ImagesInput, TagsInput, TitleInput } from "../molecule";
 
@@ -35,7 +34,7 @@ function FeedForm() {
     defaultValues: { title: "", content: "", tags: [], images: [] },
   });
 
-  const [tags, setTags] = useState<string[]>([]);
+  const tags = watch("tags");
   const images = watch("images");
 
   const onSubmit = async (data: FormData) => {
@@ -63,7 +62,7 @@ function FeedForm() {
     <div className="w-full bg-[#FDFCFC] h-auto px-[28px]">
       <form
         onSubmit={(e) => {
-          e.preventDefault(); // 페이지 리로드 방지
+          e.preventDefault();
           void handleSubmit(onSubmit)();
         }}
         className="pt-[25px] flex flex-col gap-[25px] pb-[80px]"
@@ -72,12 +71,7 @@ function FeedForm() {
       >
         <TitleInput register={register} error={errors.title} />
         <ContentInput register={register} error={errors.content} />
-        <TagsInput
-          tags={tags}
-          setTags={setTags}
-          setValue={setValue}
-          error={errors.tags}
-        />
+        <TagsInput tags={tags} setValue={setValue} error={errors.tags} />
         <ImagesInput
           images={images}
           setValue={setValue}
