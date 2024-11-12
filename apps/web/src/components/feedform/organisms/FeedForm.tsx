@@ -44,18 +44,10 @@ function FeedForm() {
     data.tags.forEach((tag) => formData.append("tags", tag));
     data.images.forEach((image) => formData.append("images", image));
 
-    try {
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error("데이터 전송에 실패했습니다.");
-      }
-    } catch {
-      // 에러 처리 로직 (예: 사용자에게 알림)
-    }
+    await fetch("v1/feeds", {
+      method: "POST",
+      body: formData,
+    });
   };
 
   return (

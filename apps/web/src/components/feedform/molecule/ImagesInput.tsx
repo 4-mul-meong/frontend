@@ -20,7 +20,7 @@ interface Preview {
 function ImagesInput({ images, setValue, error }: ImagesInputProps) {
   const [previewUrls, setPreviewUrls] = useState<Preview[]>([]);
   const INITIAL_PLACEHOLDERS = 4;
-  const MAX_UPLOAD_COUNT = 10;
+  const MAX_UPLOAD_COUNT = 5;
 
   const placeholderKeys = Array.from({ length: INITIAL_PLACEHOLDERS }, () =>
     Math.random().toString(36).substr(2, 9),
@@ -72,7 +72,7 @@ function ImagesInput({ images, setValue, error }: ImagesInputProps) {
             url={preview.url}
             name={preview.name}
             index={index}
-            onDelete={handleDelete}
+            onDelete={() => handleDelete(preview.url, index)}
           />
         ))}
         {/* 플레이스홀더 */}
