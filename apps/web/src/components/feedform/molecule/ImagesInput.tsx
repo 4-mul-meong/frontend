@@ -39,7 +39,6 @@ function ImagesInput({ images, setValue, error }: ImagesInputProps) {
     setValue("images", [...images, ...newFiles]);
   };
 
-  // 이미지 삭제 시 URL 해제 및 상태 업데이트
   const handleDelete = (url: string, index: number) => {
     const updatedPreviews = previewUrls.filter(
       (preview) => preview.url !== url,

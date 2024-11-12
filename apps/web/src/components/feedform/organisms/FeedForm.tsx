@@ -28,6 +28,7 @@ function FeedForm() {
     handleSubmit,
     setValue,
     watch,
+    reset, // reset 함수를 추가합니다.
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -44,10 +45,36 @@ function FeedForm() {
     data.tags.forEach((tag) => formData.append("tags", tag));
     data.images.forEach((image) => formData.append("images", image));
 
-    await fetch("v1/feeds", {
+    //const s3Res = await fetch("api/s3/client/feeds", {
+    //알아 하쇼
+    // if(s3Res == 200){
+    // data.images.forEach((image) => formData.append("images", image)); 를 string 이미지 경로로 덮어 씌운다.
+    // const response = await fetch("v1/feeds", {
+    //   method: "POST",
+    //   body: formData,
+    // });
+
+    // if (response.ok) {
+    //   reset(); // 제출 성공 시 폼을 초기화합니다.
+    // } else {
+    //   //  console.error("Failed to submit form");
+    // }
+    //}
+    //else{
+    //  console.log("이미지 업로드 실패")
+    //}
+    //}
+
+    const response = await fetch("v1/feeds", {
       method: "POST",
       body: formData,
     });
+
+    if (response.ok) {
+      reset(); // 제출 성공 시 폼을 초기화합니다.
+    } else {
+      //  console.error("Failed to submit form");
+    }
   };
 
   return (

@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
 
   const params = {
     Bucket: getEnvVariable("AWS_BUCKET_NAME"),
-    Key: `review/${Date.now()}-${data.fileName}`,
+    Key: `original/feed${Date.now()}-${data.fileName}`,
     Body: Buffer.from(data.fileContent, "base64"),
     ContentType: data.fileType,
   };
