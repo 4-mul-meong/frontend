@@ -13,6 +13,8 @@ import Share from "./Share";
 import Shorts from "./Shorts";
 import Save from "./Save";
 import Ellipsis from "./Ellipsis";
+import DeleteShorts from "./DeleteShorts";
+import ShortsDelete from "./ShortsDelete";
 
 export {
   Globe,
@@ -30,4 +32,6 @@ export {
   Comment,
   Save,
   Ellipsis,
+  DeleteShorts,
+  ShortsDelete,
 };
