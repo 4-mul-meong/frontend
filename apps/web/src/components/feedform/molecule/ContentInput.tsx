@@ -15,7 +15,7 @@ function ContentInput({ register, error }: ContentInputProps) {
       <textarea
         id="post"
         {...register("content")}
-        className="w-full h-[116px] border-2 rounded-lg bg-[#F1F4F9] p-2 focus:bg-[#D4D4D4]"
+        className="w-full h-[116px] border-2 outline-none rounded-lg bg-[#F1F4F9] p-2 focus:bg-[#D4D4D4]"
         rows={4}
         placeholder="내용을 입력해주세요"
       />

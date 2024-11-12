@@ -28,7 +28,7 @@ function TagsInput({ tags, setValue, error }: TagsInputProps) {
         id="tag"
         type="text"
         onKeyDown={handleAddTag}
-        className="w-full h-[55px] rounded-lg bg-[#F1F4F9] border-2 px-2 focus:bg-[#D4D4D4]"
+        className="w-full h-[55px] rounded-lg bg-[#F1F4F9] border-2 px-2 focus:bg-[#D4D4D4] outline-none"
         placeholder="태그를 입력하고 엔터를 누르세요"
       />
       <div className="flex flex-wrap gap-2 mt-2">

@@ -28,7 +28,7 @@ function FeedForm() {
     handleSubmit,
     setValue,
     watch,
-    reset, // reset 함수를 추가합니다.
+    reset,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -38,43 +38,57 @@ function FeedForm() {
   const tags = watch("tags");
   const images = watch("images");
 
-  const onSubmit = async (data: FormData) => {
-    const formData = new FormData();
-    formData.append("title", data.title);
-    formData.append("content", data.content);
-    data.tags.forEach((tag) => formData.append("tags", tag));
-    data.images.forEach((image) => formData.append("images", image));
-
-    //const s3Res = await fetch("api/s3/client/feeds", {
-    //알아 하쇼
-    // if(s3Res == 200){
-    // data.images.forEach((image) => formData.append("images", image)); 를 string 이미지 경로로 덮어 씌운다.
-    // const response = await fetch("v1/feeds", {
-    //   method: "POST",
-    //   body: formData,
-    // });
-
-    // if (response.ok) {
-    //   reset(); // 제출 성공 시 폼을 초기화합니다.
-    // } else {
-    //   //  console.error("Failed to submit form");
-    // }
-    //}
-    //else{
-    //  console.log("이미지 업로드 실패")
-    //}
-    //}
-
-    const response = await fetch("v1/feeds", {
-      method: "POST",
-      body: formData,
+  // S3 업로드 함수
+  const uploadImageToS3 = async (imageFile: File): Promise<string | null> => {
+    const fileContent = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result;
+        if (typeof result === "string") {
+          resolve(result.split(",")[1]);
+        } else {
+          reject(new Error("파일을 Base64로 변환하는 중 오류가 발생했습니다."));
+        }
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(imageFile);
     });
 
-    if (response.ok) {
-      reset(); // 제출 성공 시 폼을 초기화합니다.
-    } else {
-      //  console.error("Failed to submit form");
+    const response = await fetch("/api/s3/client/feed", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        fileName: imageFile.name,
+        fileType: imageFile.type,
+        fileContent,
+      }),
+    });
+
+    interface S3UploadResponse {
+      imageUrl: string;
     }
+
+    if (response.ok) {
+      const result = (await response.json()) as S3UploadResponse;
+      // console.log("S3 업로드 성공:", result.imageUrl);
+      return result.imageUrl;
+    }
+    // console.error("S3 업로드 실패");
+    return null;
+  };
+
+  const onSubmit = async (data: FormData) => {
+    const uploadResults = await Promise.all(data.images.map(uploadImageToS3));
+
+    if (uploadResults.some((url) => url === null)) {
+      // console.error("일부 이미지가 S3에 업로드되지 않았습니다.");
+    } else {
+      // console.log("모든 이미지가 성공적으로 S3에 업로드되었습니다.");
+    }
+
+    reset();
   };
 
   return (
@@ -85,8 +99,6 @@ function FeedForm() {
           void handleSubmit(onSubmit)();
         }}
         className="pt-[25px] flex flex-col gap-[25px] pb-[80px]"
-        method="POST"
-        encType="multipart/form-data"
       >
         <TitleInput register={register} error={errors.title} />
         <ContentInput register={register} error={errors.content} />
