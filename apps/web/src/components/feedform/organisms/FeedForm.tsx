@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { uploadFileToS3 } from "@/actions/common/awsMediaUploader";
+import { DownloadImage } from "@/components/common/icons";
 import { ContentInput, TagsInput, TitleInput } from "../molecule";
 
 // Zod 유효성 검사 스키마
@@ -19,7 +20,7 @@ const formSchema = z.object({
   tags: z.array(z.string()).max(10, "태그는 최대 10개까지 입력할 수 있습니다"),
   images: z
     .array(z.instanceof(File))
-    .max(5, "이미지는 최대 5개까지 업로드할 수 있습니다"),
+    .max(4, "이미지는 최대 4개까지 업로드할 수 있습니다"),
 });
 
 export type FormData = z.infer<typeof formSchema>;
@@ -59,7 +60,7 @@ function FeedForm() {
   };
 
   return (
-    <div className="w-full bg-[#FDFCFC] h-auto px-[28px]">
+    <div className="w-full bg-[#FDFCFC] h-full px-[28px]">
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -70,14 +71,30 @@ function FeedForm() {
         <TitleInput register={register} error={errors.title} />
         <ContentInput register={register} error={errors.content} />
         <TagsInput tags={tags} setValue={setValue} error={errors.tags} />
-        <input
-          type="file"
-          id="feedImg"
-          name="feedImg"
-          onChange={(e) => {
-            void handleFeedImage(e);
-          }}
-        />
+
+        {/* 파일 업로드 버튼 */}
+        <div className="flex flex-col items-center">
+          <label
+            htmlFor="feedImg"
+            className="items-center gap-2 w-full flex  justify-center border-dotted border-2 border-gray-300 p-4 rounded-xl bg-[#F1F4F9] h-[110px]"
+          >
+            <DownloadImage />
+
+            <span className="text-gray-600 text-[16px]">Upload attachment</span>
+          </label>
+          <input
+            type="file"
+            id="feedImg"
+            name="feedImg"
+            className="hidden"
+            onChange={(e) => {
+              void handleFeedImage(e);
+            }}
+          />
+          {/* <div className="w-[120px] h-[150px] bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 border-dashed border-2">
+            <PushImage />
+          </div> */}
+        </div>
 
         <button
           type="submit"
