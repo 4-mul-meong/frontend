@@ -1,22 +1,32 @@
-import type { UseFormSetValue } from "react-hook-form";
+import React from "react";
+import type { UseFormSetValue, UseFormTrigger } from "react-hook-form";
+import { Check } from "@/components/common/icons";
 import type { FormData } from "../organisms/FeedForm";
 
 interface TagsInputProps {
   tags: string[];
   setValue: UseFormSetValue<FormData>;
+  trigger: UseFormTrigger<FormData>;
   error?: { message?: string };
 }
 
-function TagsInput({ tags, setValue, error }: TagsInputProps) {
+function TagsInput({ tags, setValue, trigger, error }: TagsInputProps) {
   const handleAddTag = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter" && event.currentTarget.value) {
       event.preventDefault();
       const newTag = event.currentTarget.value.trim();
-      if (tags.length < 10 && newTag && !tags.includes(newTag)) {
+      if (newTag && !tags.includes(newTag)) {
         setValue("tags", [...tags, newTag]);
+        void trigger("tags");
       }
       event.currentTarget.value = "";
     }
+  };
+
+  const handleDeleteTag = (tagToDelete: string) => {
+    const updatedTags = tags.filter((tag) => tag !== tagToDelete);
+    setValue("tags", updatedTags);
+    void trigger("tags");
   };
 
   return (
@@ -35,9 +45,17 @@ function TagsInput({ tags, setValue, error }: TagsInputProps) {
         {tags.map((tag) => (
           <span
             key={tag}
-            className="text-[#217EFD] text-[12px] border-[1px] rounded-2xl border-[#217EFD] px-3 py-2"
+            className="text-[#217EFD] text-[12px] border-[1px] rounded-2xl border-[#217EFD] px-3 py-2 flex items-center gap-2"
           >
+            <Check />
             {tag}
+            <button
+              type="button"
+              onClick={() => handleDeleteTag(tag)}
+              className="text-[#217EFD]"
+            >
+              X
+            </button>
           </span>
         ))}
       </div>
