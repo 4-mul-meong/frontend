@@ -1,8 +1,10 @@
 "use client";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ContentInput, ImagesInput, TagsInput, TitleInput } from "../molecule";
+import { uploadFileToS3 } from "@/actions/common/awsMediaUploader";
+import { ContentInput, TagsInput, TitleInput } from "../molecule";
 
 // Zod 유효성 검사 스키마
 const formSchema = z.object({
@@ -36,58 +38,23 @@ function FeedForm() {
   });
 
   const tags = watch("tags");
-  const images = watch("images");
 
-  // S3 업로드 함수
-  const uploadImageToS3 = async (imageFile: File): Promise<string | null> => {
-    const fileContent = await new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const result = reader.result;
-        if (typeof result === "string") {
-          resolve(result.split(",")[1]);
-        } else {
-          reject(new Error("파일을 Base64로 변환하는 중 오류가 발생했습니다."));
-        }
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(imageFile);
-    });
+  const handleFeedImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const { files } = e.target;
+    if (!files || files.length === 0) return;
 
-    const response = await fetch("/api/s3/client/feed", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        fileName: imageFile.name,
-        fileType: imageFile.type,
-        fileContent,
-      }),
-    });
+    const res = await uploadFileToS3(files[0], "feed"); // "feed" 폴더로 업로드
 
-    interface S3UploadResponse {
-      imageUrl: string;
+    if (res) {
+      setValue("images", [...watch("images"), files[0]]); // 폼 데이터에 파일 추가
     }
-
-    if (response.ok) {
-      const result = (await response.json()) as S3UploadResponse;
-      // console.log("S3 업로드 성공:", result.imageUrl);
-      return result.imageUrl;
-    }
-    // console.error("S3 업로드 실패");
-    return null;
   };
 
   const onSubmit = async (data: FormData) => {
-    const uploadResults = await Promise.all(data.images.map(uploadImageToS3));
-
-    if (uploadResults.some((url) => url === null)) {
-      // console.error("일부 이미지가 S3에 업로드되지 않았습니다.");
-    } else {
-      // console.log("모든 이미지가 성공적으로 S3에 업로드되었습니다.");
-    }
-
+    await Promise.all(
+      data.images.map((image) => uploadFileToS3(image, "feed")),
+    );
     reset();
   };
 
@@ -103,11 +70,15 @@ function FeedForm() {
         <TitleInput register={register} error={errors.title} />
         <ContentInput register={register} error={errors.content} />
         <TagsInput tags={tags} setValue={setValue} error={errors.tags} />
-        <ImagesInput
-          images={images}
-          setValue={setValue}
-          error={errors.images}
+        <input
+          type="file"
+          id="feedImg"
+          name="feedImg"
+          onChange={(e) => {
+            void handleFeedImage(e);
+          }}
         />
+
         <button
           type="submit"
           className="text-[20px] bg-[#47D0BF] py-[18px] rounded-lg text-white text-center"
