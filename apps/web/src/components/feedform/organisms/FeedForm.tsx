@@ -1,10 +1,11 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
 import { uploadFileToS3 } from "@/actions/common/awsMediaUploader";
-import { DownloadImage } from "@/components/common/icons";
+import { DownloadImage, PushImage } from "@/components/common/icons";
 import { ContentInput, TagsInput, TitleInput } from "../molecule";
 
 // Zod 유효성 검사 스키마
@@ -31,13 +32,13 @@ function FeedForm() {
     handleSubmit,
     setValue,
     watch,
-    reset,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: { title: "", content: "", tags: [], images: [] },
   });
 
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const tags = watch("tags");
 
   const handleFeedImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,10 +46,14 @@ function FeedForm() {
     const { files } = e.target;
     if (!files || files.length === 0) return;
 
-    const res = await uploadFileToS3(files[0], "feed"); // "feed" 폴더로 업로드
+    const file = files[0];
+    const res = await uploadFileToS3(file, "feed");
 
     if (res) {
-      setValue("images", [...watch("images"), files[0]]); // 폼 데이터에 파일 추가
+      setValue("images", [...watch("images"), file]);
+
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreviews((prev) => [...prev, previewUrl].slice(0, 4));
     }
   };
 
@@ -56,7 +61,7 @@ function FeedForm() {
     await Promise.all(
       data.images.map((image) => uploadFileToS3(image, "feed")),
     );
-    reset();
+    setImagePreviews([]);
   };
 
   return (
@@ -72,14 +77,12 @@ function FeedForm() {
         <ContentInput register={register} error={errors.content} />
         <TagsInput tags={tags} setValue={setValue} error={errors.tags} />
 
-        {/* 파일 업로드 버튼 */}
         <div className="flex flex-col items-center">
           <label
             htmlFor="feedImg"
-            className="items-center gap-2 w-full flex  justify-center border-dotted border-2 border-gray-300 p-4 rounded-xl bg-[#F1F4F9] h-[110px]"
+            className="items-center gap-2 w-full flex justify-center border-dotted border-2 border-gray-300 p-4 rounded-xl bg-[#F1F4F9] h-[110px]"
           >
             <DownloadImage />
-
             <span className="text-gray-600 text-[16px]">Upload attachment</span>
           </label>
           <input
@@ -91,9 +94,27 @@ function FeedForm() {
               void handleFeedImage(e);
             }}
           />
-          {/* <div className="w-[120px] h-[150px] bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 border-dashed border-2">
-            <PushImage />
-          </div> */}
+
+          <div className="flex gap-4 mt-4 flex-wrap w-full justify-center">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div
+                key={imagePreviews[index] || index}
+                className="w-[120px] h-[150px] bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 border-dashed border-2 overflow-hidden"
+              >
+                {imagePreviews[index] ? (
+                  <Image
+                    src={imagePreviews[index]}
+                    alt={`Preview ${index + 1}`}
+                    className="w-full h-full object-cover"
+                    width={100}
+                    height={100}
+                  />
+                ) : (
+                  <PushImage />
+                )}
+              </div>
+            ))}
+          </div>
         </div>
 
         <button
