@@ -31,7 +31,7 @@ function FeedForm() {
     register,
     handleSubmit,
     setValue,
-    trigger, // trigger 함수 추가
+    trigger,
     watch,
     formState: { errors },
   } = useForm<FormData>({
