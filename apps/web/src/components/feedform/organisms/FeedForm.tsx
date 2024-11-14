@@ -1,3 +1,4 @@
+// feedForm.tsx
 "use client";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -6,9 +7,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { uploadFileToS3 } from "@/actions/common/awsMediaUploader";
 import { DownloadImage, PushImage } from "@/components/common/icons";
-import { ContentInput, TagsInput, TitleInput } from "../molecule";
+import {
+  CategoryInput,
+  ContentInput,
+  TagsInput,
+  TitleInput,
+} from "../molecule";
 
-// Zod 유효성 검사 스키마
+// Zod 유효성 검사 스키마에 category 추가
 const formSchema = z.object({
   title: z
     .string()
@@ -22,8 +28,10 @@ const formSchema = z.object({
   images: z
     .array(z.instanceof(File))
     .max(4, "이미지는 최대 4개까지 업로드할 수 있습니다"),
+  category: z.string().nonempty("카테고리를 선택하세요"), // 추가된 category 필드
 });
 
+// FormData 타입 정의에 category 포함
 export type FormData = z.infer<typeof formSchema>;
 
 function FeedForm() {
@@ -36,7 +44,13 @@ function FeedForm() {
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
-    defaultValues: { title: "", content: "", tags: [], images: [] },
+    defaultValues: {
+      title: "",
+      content: "",
+      tags: [],
+      images: [],
+      category: "",
+    },
   });
 
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
@@ -76,6 +90,7 @@ function FeedForm() {
       >
         <TitleInput register={register} error={errors.title} />
         <ContentInput register={register} error={errors.content} />
+        <CategoryInput register={register} error={errors.category} />
         <TagsInput
           tags={tags}
           setValue={setValue}

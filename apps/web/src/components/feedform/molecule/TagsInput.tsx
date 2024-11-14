@@ -1,7 +1,7 @@
 import React from "react";
 import type { UseFormSetValue, UseFormTrigger } from "react-hook-form";
 import { Check } from "@/components/common/icons";
-import type { FormData } from "../organisms/FeedForm";
+import type { FormData } from "../organisms/feedForm";
 
 interface TagsInputProps {
   tags: string[];

@@ -1,5 +1,5 @@
 import type { UseFormRegister } from "react-hook-form";
-import type { FormData } from "../organisms/FeedForm";
+import type { FormData } from "../organisms/feedForm";
 
 interface TitleInputProps {
   register: UseFormRegister<FormData>;

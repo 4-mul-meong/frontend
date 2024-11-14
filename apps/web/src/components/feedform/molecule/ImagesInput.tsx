@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import type { UseFormSetValue } from "react-hook-form";
 import { PushImage } from "@/components/common/icons";
-import type { FormData } from "../organisms/FeedForm";
+import type { FormData } from "../organisms/feedForm";
 import UploadButton from "../atoms/UploadButton";
 import PreviewImage from "../atoms/PreviewImage";
 
