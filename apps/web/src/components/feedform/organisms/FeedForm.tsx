@@ -1,4 +1,3 @@
-// feedForm.tsx
 "use client";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -26,12 +25,12 @@ const formSchema = z.object({
     .max(500, "내용은 500자 이하여야 합니다"),
   tags: z.array(z.string()).max(5, "태그는 최대 5개까지 입력할 수 있습니다"),
   images: z
-    .array(z.instanceof(File))
-    .max(4, "이미지는 최대 4개까지 업로드할 수 있습니다"),
-  category: z.string().nonempty("카테고리를 선택하세요"), // 추가된 category 필드
+    .array(z.string())
+    .max(4, "이미지는 최대 4개까지 업로드할 수 있습니다"), // S3 URL을 저장할 필드
+  category: z.string().nonempty("카테고리를 선택하세요"),
 });
 
-// FormData 타입 정의에 category 포함
+// FormData 타입 정의
 export type FormData = z.infer<typeof formSchema>;
 
 function FeedForm() {
@@ -56,27 +55,58 @@ function FeedForm() {
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const tags = watch("tags");
 
+  // 이미지 파일을 S3에 업로드하고 URL을 images 배열에 추가하는 함수
   const handleFeedImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const { files } = e.target;
     if (!files || files.length === 0) return;
 
     const file = files[0];
-    const res = await uploadFileToS3(file, "feed");
+    const s3Url = await uploadFileToS3(file, "feed");
 
-    if (res) {
-      setValue("images", [...watch("images"), file]);
-
+    if (s3Url) {
+      setValue("images", [...watch("images"), s3Url]); // S3 URL을 images에 추가
       const previewUrl = URL.createObjectURL(file);
       setImagePreviews((prev) => [...prev, previewUrl].slice(0, 4));
     }
   };
 
+  // 폼 데이터를 API로 제출하는 함수
   const onSubmit = async (data: FormData) => {
-    await Promise.all(
-      data.images.map((image) => uploadFileToS3(image, "feed")),
-    );
-    setImagePreviews([]);
+    const transformedData = {
+      memberUuid: "123e4567-e89b-12d3-a456-426614174000",
+      title: data.title,
+      content: data.content,
+      categoryId: parseInt(data.category),
+      hashtags: data.tags.map((tag) => ({ name: tag })),
+      mediaList: data.images.map((url) => ({
+        mediaUrl: url,
+        mediaType: "IMAGE",
+        description: "",
+      })),
+    };
+
+    try {
+      const response = await fetch(
+        `${process.env.BASE_API_URL}/member-service/v1/feeds`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(transformedData),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to submit form");
+      }
+
+      // console.log("Form submitted successfully!");
+      setImagePreviews([]);
+    } catch (error) {
+      // console.error("Error submitting form:", error);
+    }
   };
 
   return (
