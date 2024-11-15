@@ -1,67 +1,73 @@
-import type { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 import {
   S3Client,
   PutObjectCommand,
   DeleteObjectCommand,
-} from "@aws-sdk/client-s3";
+} from '@aws-sdk/client-s3';
 
-// 환경 변수 설정 체크 함수
-function getEnvVariable(name: string): string {
-  const value = process.env[name];
-  if (!value) {
-    throw new Error(`Missing environment variable: ${name}`);
-  }
-  return value;
+if (
+  !process.env.AWS_REGION ||
+  !process.env.AWS_ACCESS_KEY_ID ||
+  !process.env.AWS_SECRET_ACCESS_KEY
+) {
+  throw new Error('Missing required AWS environment variables');
 }
 
 const s3Client = new S3Client({
-  region: getEnvVariable("AWS_REGION"),
+  region: process.env.AWS_REGION,
   credentials: {
-    accessKeyId: getEnvVariable("AWS_ACCESS_KEY_ID"),
-    secretAccessKey: getEnvVariable("AWS_SECRET_ACCESS_KEY"),
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
   },
 });
 
-// POST 요청에서 필요한 데이터 구조
-interface UploadRequestData {
-  fileName: string;
-  fileType: string;
-  fileContent: string;
-}
-
-// DELETE 요청에서 필요한 데이터 구조
-interface DeleteRequestData {
-  fileUrl: string;
-}
-
-// POST 요청 - S3에 파일 업로드
+// POST 요청을 처리하는 함수
 export async function POST(req: NextRequest) {
-  const data = (await req.json()) as UploadRequestData;
+  try {
+    const { fileName, fileType, fileContent } = await req.json();
 
-  const params = {
-    Bucket: getEnvVariable("AWS_BUCKET_NAME"),
-    Key: `original/feed${Date.now()}-${data.fileName}`,
-    Body: Buffer.from(data.fileContent, "base64"),
-    ContentType: data.fileType,
-  };
+    const params = {
+      Bucket: process.env.AWS_BUCKET_NAME!,
+      Key: `review/${Date.now()}-${fileName}`,
+      Body: Buffer.from(fileContent, 'base64'),
+      ContentType: fileType,
+    };
 
-  const command = new PutObjectCommand(params);
-  await s3Client.send(command);
+    const command = new PutObjectCommand(params);
+    await s3Client.send(command);
 
-  const imageUrl = `${getEnvVariable("AWS_BUCKET_URL")}/${params.Key}`;
-  return NextResponse.json({ imageUrl });
+    const imageUrl = `${process.env.AWS_BUCKET_URL}/${params.Key}`;
+    return NextResponse.json({ imageUrl });
+  } catch (error) {
+    console.error('Error uploading to S3:', error);
+    return NextResponse.json(
+      { error: 'Failed to upload file' },
+      { status: 500 }
+    );
+  }
 }
 
-// DELETE 요청 - S3에서 파일 삭제
+// DELETE 요청을 처리하는 함수
 export async function DELETE(req: NextRequest) {
-  const data = (await req.json()) as DeleteRequestData;
+  try {
+    const { fileUrl } = await req.json();
+    console.log('key', fileUrl);
 
-  const params = {
-    Bucket: getEnvVariable("AWS_BUCKET_NAME"),
-    Key: data.fileUrl.replace(`${getEnvVariable("AWS_BUCKET_URL")}/`, ""),
-  };
+    const params = {
+      Bucket: process.env.AWS_BUCKET_NAME!,
+      Key: fileUrl.replace(`${process.env.AWS_BUCKET_URL}`, ''),
+    };
 
-  await s3Client.send(new DeleteObjectCommand(params));
-  return NextResponse.json({ message: "Successfully deleted" });
+    // S3 객체 삭제
+    await s3Client.send(new DeleteObjectCommand(params));
+
+    return NextResponse.json({ message: 'Successfully deleted' });
+  } catch (error) {
+    console.error('Error deleting from S3:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete file' },
+      { status: 500 }
+    );
+  }
 }
