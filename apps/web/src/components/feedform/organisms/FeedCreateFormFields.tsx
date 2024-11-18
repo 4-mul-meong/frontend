@@ -1,6 +1,10 @@
 "use client";
 import React, { useState } from "react";
-import type { CreateFeedType } from "@/types/request/requestType";
+import type {
+  CreateFeedType,
+  Media,
+  Hashtag,
+} from "@/types/request/requestType";
 import { feedFormSchema } from "@/schema/FeedFormSchema";
 import ImageUploader from "../molecule/ImageUploader";
 
@@ -14,35 +18,7 @@ function FeedCreateFormFields() {
     mediaList: [],
   });
 
-  // Validation 및 값 변환 함수
-  const handleValidation = (
-    name: string,
-    type: string,
-    value: string,
-    files: FileList | null,
-  ) => {
-    if (type === "file") {
-      return Array.from(files || []).map((file) => ({
-        mediaId: crypto.randomUUID(),
-        mediaType: file.type,
-        mediaUrl: URL.createObjectURL(file),
-      }));
-    }
-
-    if (name === "tags") {
-      return value
-        .split(",")
-        .map((tag) => tag.trim())
-        .filter((tag) => tag.length > 0)
-        .map((tag) => ({ name: tag }));
-    }
-
-    if (name === "categoryId") {
-      return parseInt(value, 10);
-    }
-
-    return value;
-  };
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleChange = (
     event: React.ChangeEvent<
@@ -50,27 +26,52 @@ function FeedCreateFormFields() {
     >,
   ) => {
     const { name, value, type } = event.target;
-    const files = (event.target as HTMLInputElement).files;
 
-    const validatedValue = handleValidation(name, type, value, files);
+    let updatedValue: unknown;
 
-    // `feedFormSchema`로 검증
-    const res = feedFormSchema.safeParse({
-      ...payload,
-      [name]: validatedValue,
-    });
-    // console.log("Validation result:", res);
-
-    if (!res.success) {
-      // console.error("Validation failed:", res.error);
-      return;
+    if (type === "file") {
+      const files = (event.target as HTMLInputElement).files;
+      if (files) {
+        updatedValue = Array.from(files).map((file) => ({
+          mediaId: "",
+          mediaType: file.type,
+          mediaUrl: URL.createObjectURL(file),
+        }));
+        setPayload((prev) => ({ ...prev, mediaList: updatedValue as Media[] }));
+      }
+    } else if (name === "tags") {
+      updatedValue = value.split(",").map((tag) => ({
+        name: tag.trim(),
+      })); // 객체 배열로 변환
+      setPayload((prev) => ({ ...prev, hashtags: updatedValue as Hashtag[] }));
+    } else if (name === "categoryId") {
+      updatedValue = parseInt(value, 10);
+      setPayload((prev) => ({ ...prev, categoryId: updatedValue as number }));
+    } else {
+      updatedValue = value;
+      setPayload((prev) => ({ ...prev, [name]: updatedValue }));
     }
 
-    // 상태 업데이트
-    setPayload((prev) => ({
-      ...prev,
-      [name]: validatedValue,
-    }));
+    const validatedPayload = {
+      ...payload,
+      [name]: updatedValue,
+    };
+
+    // feedFormSchema 검증
+    const res = feedFormSchema.safeParse(validatedPayload);
+
+    if (!res.success) {
+      const validationErrors = res.error.issues.reduce(
+        (acc, issue) => ({
+          ...acc,
+          [issue.path[0]]: issue.message,
+        }),
+        {},
+      );
+      setErrors(validationErrors); // 에러 메시지 저장
+    } else {
+      setErrors({}); // 에러 초기화
+    }
   };
 
   return (
@@ -86,7 +87,9 @@ function FeedCreateFormFields() {
           onChange={handleChange}
           className="w-full h-[55px] rounded-lg outline-none bg-[#F1F4F9] px-2 border-2 focus:bg-[#D4D4D4]"
         />
+        {errors.title ? <p style={{ color: "red" }}>{errors.title}</p> : null}
       </div>
+
       <div className="flex flex-col gap-3">
         <label htmlFor="post" className="block text-sm font-bold">
           내용
@@ -99,7 +102,11 @@ function FeedCreateFormFields() {
           placeholder="내용을 입력해주세요"
           onChange={handleChange}
         />
+        {errors.content ? (
+          <p style={{ color: "red" }}>{errors.content}</p>
+        ) : null}
       </div>
+
       <div className="flex flex-col gap-3">
         <label htmlFor="categoryId" className="block text-sm font-bold">
           Category
@@ -110,16 +117,17 @@ function FeedCreateFormFields() {
           className="block w-full px-3 py-3 bg-[#F1F4F9] border-2 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#D4D4D4] focus:border-transparent"
           onChange={handleChange}
         >
-          <option value="0" disabled>
-            카테고리를 선택하세요
-          </option>
+          <option value="0">카테고리를 선택하세요</option>
           <option value="1">관상어</option>
           <option value="2">장터</option>
           <option value="3">양육일기</option>
         </select>
+        {errors.categoryId ? (
+          <p style={{ color: "red" }}>{errors.categoryId}</p>
+        ) : null}
       </div>
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3">
         <label htmlFor="tags" className="block text-sm font-bold">
           태그
         </label>
@@ -131,6 +139,7 @@ function FeedCreateFormFields() {
           placeholder="태그 (쉼표로 구분)"
           onChange={handleChange}
         />
+        {errors.tags ? <p style={{ color: "red" }}>{errors.tags}</p> : null}
       </div>
 
       <ImageUploader />
