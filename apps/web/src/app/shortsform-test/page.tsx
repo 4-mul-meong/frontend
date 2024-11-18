@@ -1,10 +1,11 @@
 import React from "react";
-import ShortsForm from "@/components/shortsform/templates/ShortsForm";
+import ShortsWriteForm from "@/components/shortsform/templates/ShortsWriteForm";
 
 function page() {
   return (
-    <main className="bg-gray-100 min-h-screen w-full">
-      <ShortsForm />
+    // 나중에 shorts 페이지 안에 폴더에 만들어야 됨
+    <main className="bg-[#E9E9E9] min-h-screen w-full">
+      <ShortsWriteForm />
     </main>
   );
 }
