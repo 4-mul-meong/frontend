@@ -43,7 +43,7 @@ async function uploadFileToS3(file: File, folder = "") {
 }
 
 async function deleteFileFromS3(fileUrl: string) {
-  const res = await fetch("/api/s3/client", {
+  const res = await fetch("/api/s3/client/feed", {
     method: "DELETE",
     body: JSON.stringify({
       fileUrl,

@@ -1,5 +1,3 @@
-import type { Hashtag, Media } from "../contents";
-
 export interface CreateFeedType {
   memberUuid: string;
   title: string;
@@ -7,4 +5,14 @@ export interface CreateFeedType {
   categoryId: number;
   hashtags: Hashtag[];
   mediaList: Media[];
+}
+
+export interface Media {
+  mediaId: string;
+  mediaType: string;
+  mediaUrl: string;
+}
+
+export interface Hashtag {
+  name: string;
 }

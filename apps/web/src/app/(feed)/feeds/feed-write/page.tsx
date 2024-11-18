@@ -1,22 +1,21 @@
-import { createFeed } from '@/actions/feed'
-import { CommonLayout } from '@/components/common/molecules'
-import FeedWriteFrom from '@/components/feedform/organisms/FeedWriteFrom'
+import { createFeed } from "@/actions/feed";
+import { CommonLayout } from "@/components/common/molecules";
+import FeedWriteFrom from "@/components/feedform/organisms/FeedWriteFrom";
 
 function page() {
-
   const handleCreateFeed = async (feedFormData: FormData): Promise<void> => {
-    'use server'
-    const res = await createFeed(feedFormData) as boolean
+    "use server";
+    const res = (await createFeed(feedFormData)) as boolean;
     if (!res) {
-      throw Error()
+      // throw Error();
     }
-  }
+  };
 
   return (
     <CommonLayout.Contents>
-        <FeedWriteFrom handleCreateFeed={handleCreateFeed} />
+      <FeedWriteFrom handleCreateFeed={handleCreateFeed} />
     </CommonLayout.Contents>
-  )
+  );
 }
 
-export default page
+export default page;
