@@ -119,7 +119,7 @@ function FeedCreateFormFields() {
         </select>
       </div>
 
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-4">
         <label htmlFor="tags" className="block text-sm font-bold">
           태그
         </label>
