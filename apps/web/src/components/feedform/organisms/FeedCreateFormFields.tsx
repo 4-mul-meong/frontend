@@ -2,8 +2,8 @@
 import React, { useState } from "react";
 import type {
   CreateFeedType,
-  Media,
-  Hashtag,
+  FeedMedia,
+  FeedHashtag,
 } from "@/types/request/requestType";
 import { feedFormSchema } from "@/schema/FeedFormSchema";
 import ImageUploader from "../molecule/ImageUploader";
@@ -37,13 +37,19 @@ function FeedCreateFormFields() {
           mediaType: file.type,
           mediaUrl: URL.createObjectURL(file),
         }));
-        setPayload((prev) => ({ ...prev, mediaList: updatedValue as Media[] }));
+        setPayload((prev) => ({
+          ...prev,
+          mediaList: updatedValue as FeedMedia[],
+        }));
       }
     } else if (name === "tags") {
       updatedValue = value.split(",").map((tag) => ({
         name: tag.trim(),
       })); // 객체 배열로 변환
-      setPayload((prev) => ({ ...prev, hashtags: updatedValue as Hashtag[] }));
+      setPayload((prev) => ({
+        ...prev,
+        hashtags: updatedValue as FeedHashtag[],
+      }));
     } else if (name === "categoryId") {
       updatedValue = parseInt(value, 10);
       setPayload((prev) => ({ ...prev, categoryId: updatedValue as number }));
