@@ -1,7 +1,4 @@
-import ShortsHrader from "./ShortsHeader";
-import ShortsPost from "./ShortsPost";
-import ShortsTag from "./ShortsTag";
-import ShortsTitle from "./ShortsTitle";
-import Video from "./Video";
+import ShortsHeader from "./ShortsHeader";
+import VideoUploader from "./VideoUploader";
 
-export { ShortsTitle, ShortsPost, ShortsTag, Video, ShortsHrader };
+export { VideoUploader, ShortsHeader };

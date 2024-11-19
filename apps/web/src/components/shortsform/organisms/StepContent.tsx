@@ -1,37 +1,71 @@
+import { VideoUploader } from "../molecules";
+
 interface StepContentProps {
   step: number;
 }
 
 function StepContent({ step }: StepContentProps): JSX.Element | null {
-  if (step === 0) {
-    return (
-      <div className="text-center">
-        <div className="border-dashed border-2 border-gray-400 rounded-lg p-8 mb-4">
-          {/* Step 1 콘텐츠 */}
-          Step 1: 여기에 이미지 업로드 UI를 추가하세요.
+  return (
+    <fieldset className="step-content-wrapper px-[28px] py-[30px]">
+      {step === 0 && (
+        <div className="">
+          <VideoUploader />
         </div>
-      </div>
-    );
-  } else if (step === 1) {
-    return (
-      <div className="text-center">
-        <div className="flex flex-col gap-4">
-          {/* Step 2 콘텐츠 */}
-          Step 2: 여기에 입력 필드 등을 추가하세요.
+      )}
+      {step === 1 && (
+        <fieldset className="">
+          <div className="flex flex-col gap-[22px]">
+            {/* 제목 */}
+            <div className="flex flex-col gap-[12px]">
+              <label htmlFor="headline" className="block text-sm font-bold">
+                제목
+              </label>
+              <input
+                id="headline"
+                type="text"
+                placeholder="제목을 입력해주세요."
+                className="w-full h-[55px] rounded-lg outline-none bg-[#F1F4F9] px-2 border-2 focus:bg-[#D4D4D4]"
+              />
+            </div>
+
+            {/* 내용 */}
+            <div className="flex flex-col gap-[12px]">
+              <label htmlFor="post" className="block text-sm font-bold">
+                내용
+              </label>
+              <textarea
+                id="post"
+                className="w-full h-[116px] border-2 outline-none rounded-lg bg-[#F1F4F9] p-2 focus:bg-[#D4D4D4]"
+                rows={4}
+                placeholder="내용을 입력해주세요"
+              />
+            </div>
+
+            {/* 태그  */}
+            <div className="flex flex-col gap-[12px]">
+              <label htmlFor="value" className="block text-sm font-bold">
+                Tags
+              </label>
+              <input
+                type="text"
+                id="value"
+                className="w-full h-[55px] rounded-lg bg-[#F1F4F9] border-2 px-2 focus:bg-[#D4D4D4] outline-none "
+                placeholder="태그를 선택해주세요."
+              />
+            </div>
+          </div>
+        </fieldset>
+      )}
+      {step === 2 && (
+        <div className="">
+          <div>
+            {/* Step 3 콘텐츠 */}
+            Step 3: 피드 상세 페이지 미리보기 업로드
+          </div>
         </div>
-      </div>
-    );
-  } else if (step === 2) {
-    return (
-      <div className="text-center">
-        <div>
-          {/* Step 3 콘텐츠 */}
-          Step 3: 여기에 최종 확인 및 제출 UI를 추가하세요.
-        </div>
-      </div>
-    );
-  }
-  return null; // 잘못된 스텝 값 처리
+      )}
+    </fieldset>
+  );
 }
 
 export default StepContent;

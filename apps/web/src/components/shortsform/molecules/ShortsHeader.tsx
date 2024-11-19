@@ -1,10 +1,10 @@
 import React from "react";
 import { DeleteShorts } from "@/components/common/icons";
 
-function ShortsHrader() {
+function ShortsHeader() {
   return (
     <div>
-      <div className="flex justify-between px-[28px] py-7 items-center">
+      <div className="flex justify-between  pt-7 pb-4 items-center">
         <div className="text-[#47D0BF] text-[20px] space-x-2">
           <span>#</span>
           <span>쇼츠 만들기</span>
@@ -17,4 +17,4 @@ function ShortsHrader() {
   );
 }
 
-export default ShortsHrader;
+export default ShortsHeader;

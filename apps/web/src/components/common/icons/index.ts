@@ -14,7 +14,9 @@ import Shorts from "./Shorts";
 import Save from "./Save";
 import Ellipsis from "./Ellipsis";
 import DeleteShorts from "./DeleteShorts";
-import ShortsDelete from "./ShortsDelete";
+import ShortsDelete from "./ShortsButton";
+import GoButton from "./GoButton";
+import BackButton from "./BackButton";
 
 export {
   Globe,
@@ -34,4 +36,6 @@ export {
   Ellipsis,
   DeleteShorts,
   ShortsDelete,
+  GoButton,
+  BackButton,
 };
