@@ -14,7 +14,7 @@ function Conversion({
   handleNext,
 }: StepButtonProps): JSX.Element {
   return (
-    <div className="flex justify-center gap-4">
+    <div className="flex justify-center">
       {/* Back Button */}
       <button
         type="button"
