@@ -12,7 +12,7 @@ export interface FeedHashtag {
 }
 
 export interface FeedMedia {
-  mediaType: string; // 미디어 타입 (e.g., "IMAGE", "VIDEO")
+  mediaType: "IMAGE" | "VIDEO"; // 미디어 타입 (e.g., "IMAGE", "VIDEO")
   mediaUrl: string; // 미디어 URL
   description: string; // 미디어 설명
 }

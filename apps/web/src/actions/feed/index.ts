@@ -79,23 +79,36 @@ export async function createFeed(feedFormData: FormData): Promise<boolean> {
     const categoryId = Number(feedFormData.get("categoryId")) || 0;
 
     // tags를 해시태그 배열로 변환
-    const tags = feedFormData.get("tags") as string; // 'ㅁㄴㅇㄴㅁㅇ'
+    const tags = feedFormData.get("tags") as string;
     const hashtags: FeedHashtag[] = tags
       ? tags.split(",").map((tag) => ({ name: tag.trim() }))
       : [];
 
     // feedImg를 미디어 리스트로 변환
     const feedImg = feedFormData.get("feedImg");
-    const mediaList: FeedMedia[] =
-      feedImg && feedImg instanceof File
-        ? [
-            {
-              mediaUrl: "https://example.com/uploaded-image-path", // 파일 업로드 후 URL 경로를 지정
-              mediaType: "IMAGE",
-              description: feedImg.name,
-            },
-          ]
-        : [];
+    let mediaList: FeedMedia[] = [];
+
+    // feedImg가 존재하고 File의 인스턴스인지 확인
+    if (feedImg && feedImg instanceof File) {
+      // mediaType 결정
+      let mediaType: "IMAGE" | "VIDEO" | null = null;
+      if (feedImg.type.startsWith("image/")) {
+        mediaType = "IMAGE";
+      } else if (feedImg.type.startsWith("video/")) {
+        mediaType = "VIDEO";
+      }
+
+      // 유효한 mediaType이 있는 경우에만 mediaList 생성
+      if (mediaType) {
+        mediaList = [
+          {
+            mediaUrl: "imageUrl", // 업로드된 파일의 URL (API 호출 후 URL을 받아야 한다면 수정 필요)
+            mediaType, // "IMAGE" 또는 "VIDEO"
+            description: feedImg.name,
+          },
+        ];
+      }
+    }
 
     // payload 생성
     const payload: CreateFeedType = {
