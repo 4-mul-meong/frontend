@@ -77,6 +77,7 @@ function ImageUploader() {
         id="feedImg"
         name="feedImg"
         className="hidden"
+        accept="image/*,video/*"
         onChange={(e) => {
           void handleFeedImage(e);
         }}

@@ -74,7 +74,7 @@ export async function DELETE(req: NextRequest) {
     // 삭제 성공 메시지 반환
     return NextResponse.json({ message: "Successfully deleted" });
   } catch (error) {
-    console.error("Error deleting from S3:", error); // 에러 디버깅 메시지
+    console.error("Error deleting from S3:", error);
     return NextResponse.json(
       { error: "Failed to delete file" },
       { status: 500 },
