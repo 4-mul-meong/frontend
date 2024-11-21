@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.693.0",
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@hookform/resolvers": "^3.9.1",
     "@repo/ui": "workspace:*",
     "@types/fluent-ffmpeg": "^2.1.27",
