@@ -18,6 +18,8 @@ import Check from "./Check";
 import DeleteButton from "./DeleteButton";
 import DownloadImage from "./DownloadImage";
 import PushImage from "./PushImage";
+import Public from "./Public";
+import Private from "./Private";
 
 export {
   ArrowRight,
@@ -40,4 +42,6 @@ export {
   Comment,
   Save,
   Ellipsis,
+  Public,
+  Private,
 };

@@ -27,14 +27,11 @@ const s3Client = new S3Client({
   },
 });
 
-// POST 핸들러: 파일 업로드 처리
+// POST 핸들러: 파일 업로드 처리`
 export async function POST(req: NextRequest) {
   try {
     // 요청에서 업로드할 파일 정보 파싱
     const { fileName, fileType, fileContent } = await req.json();
-
-    // 파일 이름에서 공백 및 하이픈을 밑줄로 대체
-    const sanitizedFileName = fileName.replace(/[\s-]+/g, "_");
 
     // 파일 확장자 추출
     const extension = fileName.split(".").pop();

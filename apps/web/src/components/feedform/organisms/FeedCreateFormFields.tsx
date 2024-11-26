@@ -6,6 +6,7 @@ import type {
   FeedHashtag,
 } from "@/types/request/requestType";
 import { feedFormSchema } from "@/schema/FeedFormSchema";
+import { Private, Public } from "@/components/common/icons";
 import ImageUploader from "../molecule/ImageUploader";
 
 function FeedCreateFormFields() {
@@ -146,6 +147,40 @@ function FeedCreateFormFields() {
           onChange={handleChange}
         />
         {errors.tags ? <p style={{ color: "red" }}>{errors.tags}</p> : null}
+      </div>
+
+      <div className="flex flex-col space-y-3">
+        <label id="public" className="flex items-center space-x-2">
+          <input
+            type="radio"
+            name="status"
+            value="public"
+            className="h-5 w-5 border-gray-300 "
+          />
+          <Public width={27} height={27} />
+          <div className="flex flex-col gap-1">
+            <span className="text-[1rem] font-medium">VISIBLE</span>
+            <span className="text-[0.8rem] text-gray-500">
+              모두가 피드를 볼 수 있어요.
+            </span>
+          </div>
+        </label>
+
+        <label id="hidden" className="flex items-center space-x-2">
+          <input
+            type="radio"
+            name="status"
+            value="hidden"
+            className="h-5 w-5 border-gray-300 "
+          />
+          <Private width={27} height={27} />
+          <div className="flex flex-col gap-1">
+            <span className="text-[1rem] font-medium">HIDDEN</span>
+            <span className="text-[0.8rem] text-gray-500">
+              나만 피드를 볼 수 있어요.
+            </span>
+          </div>
+        </label>
       </div>
 
       <ImageUploader />
