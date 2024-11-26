@@ -4,16 +4,14 @@ import StepContent from "../organisms/StepContent";
 import Conversion from "../atoms/Conversion";
 
 function ShortsWriteForm(): JSX.Element {
-  const [activeStep, setActiveStep] = useState<number>(0); // 현재 스텝 상태 관리
+  const [activeStep, setActiveStep] = useState<number>(0); // 스탭관리
 
-  // 스텝 데이터 배열 (고유 id 포함)
   const steps = [
     { id: "step1", label: "Step 1" },
     { id: "step2", label: "Step 2" },
-    { id: "step3", label: "Step 3" },
   ];
 
-  const maxSteps = steps.length; // 총 스텝 수
+  const maxSteps = steps.length;
 
   // handleNext 함수
   const handleNext = (): void => {
@@ -31,8 +29,7 @@ function ShortsWriteForm(): JSX.Element {
 
   return (
     <div className="h-full">
-      <form className="bg-[#fff] w-full rounded-b-xl min-h-[400px] max-h-[700px] overflow-y-auto scrollbar-hide">
-        {/* 스텝 콘텐츠 렌더링 */}
+      <form className="bg-[#fff] w-full rounded-b-xl min-h-[400px] max-h-[600px] overflow-y-auto scrollbar-hide">
         <StepContent step={activeStep} />
       </form>
 
