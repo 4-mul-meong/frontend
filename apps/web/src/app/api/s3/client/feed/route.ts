@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     // 파일 유형에 따라 디렉토리 경로 설정
     const directory = fileType.startsWith("image/")
       ? "image"
-      : "video/original";
+      : "video/processed";
 
     // 객체 키 생성 (디렉토리 포함, UUID + 확장자)
     const key = `${directory}/${randomUUID()}.${extension}`;

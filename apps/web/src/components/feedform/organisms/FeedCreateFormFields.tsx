@@ -1,10 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import type {
-  CreateFeedType,
-  FeedMedia,
-  FeedHashtag,
-} from "@/types/request/requestType";
+import type { CreateFeedType, FeedHashtag } from "@/types/request/requestType";
 import { feedFormSchema } from "@/schema/FeedFormSchema";
 import { Private, Public } from "@/components/common/icons";
 import ImageUploader from "../molecule/ImageUploader";
@@ -15,6 +11,7 @@ function FeedCreateFormFields() {
     title: "",
     content: "",
     categoryId: 0,
+    visibility: "VISIBLE", // 기본값
     hashtags: [],
     mediaList: [],
   });
@@ -26,27 +23,15 @@ function FeedCreateFormFields() {
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >,
   ) => {
-    const { name, value, type } = event.target;
+    const { name, value } = event.target;
 
     let updatedValue: unknown;
 
-    if (type === "file") {
-      const files = (event.target as HTMLInputElement).files;
-      if (files) {
-        updatedValue = Array.from(files).map((file) => ({
-          mediaId: "",
-          mediaType: file.type,
-          mediaUrl: URL.createObjectURL(file),
-        }));
-        setPayload((prev) => ({
-          ...prev,
-          mediaList: updatedValue as FeedMedia[],
-        }));
-      }
-    } else if (name === "tags") {
+    if (name === "tags") {
+      // 태그 처리
       updatedValue = value.split(",").map((tag) => ({
         name: tag.trim(),
-      })); // 객체 배열로 변환
+      })); // FeedHashtag[] 변환
       setPayload((prev) => ({
         ...prev,
         hashtags: updatedValue as FeedHashtag[],
@@ -54,6 +39,12 @@ function FeedCreateFormFields() {
     } else if (name === "categoryId") {
       updatedValue = parseInt(value, 10);
       setPayload((prev) => ({ ...prev, categoryId: updatedValue as number }));
+    } else if (name === "status") {
+      updatedValue = value === "public" ? "VISIBLE" : "HIDDEN";
+      setPayload((prev) => ({
+        ...prev,
+        visibility: updatedValue as "VISIBLE" | "HIDDEN",
+      }));
     } else {
       updatedValue = value;
       setPayload((prev) => ({ ...prev, [name]: updatedValue }));
@@ -156,6 +147,7 @@ function FeedCreateFormFields() {
             name="status"
             value="public"
             className="h-5 w-5 border-gray-300 "
+            onChange={handleChange}
           />
           <Public width={27} height={27} />
           <div className="flex flex-col gap-1">
@@ -172,6 +164,7 @@ function FeedCreateFormFields() {
             name="status"
             value="hidden"
             className="h-5 w-5 border-gray-300 "
+            onChange={handleChange}
           />
           <Private width={27} height={27} />
           <div className="flex flex-col gap-1">

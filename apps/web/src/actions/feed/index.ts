@@ -1,10 +1,11 @@
+import { randomUUID } from "node:crypto";
 import type { CommonRes, Pagination } from "@/types/common";
 import { commonPaginationRes, commonRes } from "@/types/common/dummy";
 import type { Feed } from "@/types/contents";
 import type {
   CreateFeedType,
   FeedHashtag,
-  FeedMedia,
+  Media,
 } from "@/types/request/requestType";
 
 const API_SERVER = process.env.JSON_SERVER;
@@ -62,10 +63,8 @@ export async function getFeed(feedUuid: string): Promise<Feed> {
   return result[0];
 }
 
-// -- feed form
+//피드폼
 export async function createFeed(feedFormData: FormData): Promise<boolean> {
-  // console.log("feedFormData:", feedFormData);
-
   try {
     // 환경 변수 확인
     if (!BASE_API_URL) {
@@ -73,9 +72,9 @@ export async function createFeed(feedFormData: FormData): Promise<boolean> {
     }
 
     // FormData에서 값 추출 및 가공
-    const memberUuid = feedFormData.get("memberUuid") || "unknown";
-    const title = feedFormData.get("title") || "";
-    const content = feedFormData.get("content") || "";
+    const memberUuid = (feedFormData.get("memberUuid") as string) || "unknown";
+    const title = (feedFormData.get("title") as string) || "";
+    const content = (feedFormData.get("content") as string) || "";
     const categoryId = Number(feedFormData.get("categoryId")) || 0;
 
     // tags를 해시태그 배열로 변환
@@ -84,38 +83,60 @@ export async function createFeed(feedFormData: FormData): Promise<boolean> {
       ? tags.split(",").map((tag) => ({ name: tag.trim() }))
       : [];
 
-    // feedImg를 미디어 리스트로 변환
-    const feedImg = feedFormData.get("feedImg");
-    let mediaList: FeedMedia[] = [];
+    const feedImgs = feedFormData.getAll("feedImg") as File[];
+    const mediaList: Media[] = [];
 
-    // feedImg가 존재하고 File의 인스턴스인지 확인
-    if (feedImg && feedImg instanceof File) {
-      // mediaType 결정
-      let mediaType: "IMAGE" | "VIDEO" | null = null;
-      if (feedImg.type.startsWith("image/")) {
-        mediaType = "IMAGE";
-      } else if (feedImg.type.startsWith("video/")) {
-        mediaType = "VIDEO";
-      }
+    feedImgs.forEach((file) => {
+      const mediaUuid = randomUUID(); // 랜덤 UUID 생성
 
-      // 유효한 mediaType이 있는 경우에만 mediaList 생성
-      if (mediaType) {
-        mediaList = [
-          {
-            mediaUrl: "imageUrl", // 업로드된 파일의 URL (API 호출 후 URL을 받아야 한다면 수정 필요)
-            mediaType, // "IMAGE" 또는 "VIDEO"
-            description: feedImg.name,
+      if (file.type.startsWith("image/")) {
+        mediaList.push({
+          mediaUuid, // 생성된 UUID 사용
+          mediaType: "IMAGE",
+          assets: {
+            IMAGE: {
+              mediaUrl: `video/processed/${mediaUuid}/Thumbnails/${mediaUuid}.jpg`, // 경로 지정
+              description: file.name,
+            },
           },
-        ];
+        });
+      } else if (file.type.startsWith("video")) {
+        mediaList.push({
+          mediaUuid, // 생성된 UUID 사용
+          mediaType: "VIDEO",
+          assets: {
+            VIDEO_THUMBNAIL: {
+              mediaUrl: `video/processed/${mediaUuid}/Thumbnails/${mediaUuid}.0000000.jpg`,
+              description: `${file.name} thumbnail`,
+            },
+            STREAMING_360: {
+              mediaUrl: `video/processed/${mediaUuid}/HLS/${mediaUuid}_360.m3u8`,
+              description: `${file.name} 360p`,
+            },
+            STREAMING_540: {
+              mediaUrl: `video/processed/${mediaUuid}/HLS/${mediaUuid}_540.m3u8`,
+              description: `${file.name} 540p`,
+            },
+            STREAMING_720: {
+              mediaUrl: `video/processed/${mediaUuid}/HLS/${mediaUuid}_720.m3u8`,
+              description: `${file.name} 720p`,
+            },
+            VIDEO_MP4: {
+              mediaUrl: `video/processed/${mediaUuid}/MP4/${mediaUuid}.mp4`,
+              description: file.name,
+            },
+          },
+        });
       }
-    }
+    });
 
     // payload 생성
     const payload: CreateFeedType = {
-      memberUuid: memberUuid as string,
-      title: title as string,
-      content: content as string,
+      memberUuid,
+      title,
+      content,
       categoryId,
+      visibility: "VISIBLE", // 항상 "VISIBLE"로 설정 (필요 시 변경 가능)
       hashtags,
       mediaList,
     };
@@ -131,9 +152,8 @@ export async function createFeed(feedFormData: FormData): Promise<boolean> {
       body: JSON.stringify(payload),
     });
 
+    // API 응답 처리
     const { isSuccess } = (await res.json()) as CommonRes<null>;
-    // console.log("API Result:", isSuccess);
-
     return isSuccess;
   } catch (error) {
     // console.error("Request failed:", error);

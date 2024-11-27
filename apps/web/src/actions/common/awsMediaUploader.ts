@@ -1,8 +1,8 @@
 async function uploadFileToS3(file: File, folder = "") {
-  // 파일 크기 제한: 8MB 이하
-  const MAX_FILE_SIZE = 8 * 1024 * 1024; // 8MB
+  // 파일 크기 제한: 25MB 이하
+  const MAX_FILE_SIZE = 25 * 1024 * 1024; // 20MB
   if (file.size > MAX_FILE_SIZE) {
-    throw new Error("파일 크기는 8MB 이하여야 합니다.");
+    throw new Error("파일 크기는 25MB 이하여야 합니다.");
   }
 
   // 영상 길이 제한: 1분 이하 (영상 파일일 경우만)
@@ -54,6 +54,10 @@ async function uploadFileToS3(file: File, folder = "") {
   }
 
   const data = (await res.json()) as UploadResponse;
+
+  // 콘솔에 URL 출력
+  // console.log("Uploaded file URL:", data.imageUrl);
+
   return data.imageUrl;
 }
 
