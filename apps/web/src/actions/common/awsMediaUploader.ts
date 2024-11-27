@@ -1,6 +1,15 @@
+"use client";
+
+let videoUploaded = false; // 전역 변수로 비디오 업로드 상태를 추적
+
 async function uploadFileToS3(file: File, folder = "") {
+  // 비디오 파일 업로드 제한 확인
+  if (file.type.startsWith("video/") && videoUploaded) {
+    throw new Error("비디오는 하나만 업로드할 수 있습니다.");
+  }
+
   // 파일 크기 제한: 25MB 이하
-  const MAX_FILE_SIZE = 25 * 1024 * 1024; // 20MB
+  const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25MB
   if (file.size > MAX_FILE_SIZE) {
     throw new Error("파일 크기는 25MB 이하여야 합니다.");
   }
@@ -55,6 +64,11 @@ async function uploadFileToS3(file: File, folder = "") {
 
   const data = (await res.json()) as UploadResponse;
 
+  // 비디오 업로드 상태 갱신
+  if (file.type.startsWith("video/")) {
+    videoUploaded = true;
+  }
+
   // 콘솔에 URL 출력
   // console.log("Uploaded file URL:", data.imageUrl);
 
@@ -80,7 +94,7 @@ async function getVideoDuration(file: File): Promise<number> {
   });
 }
 
-async function deleteFileFromS3(fileUrl: string) {
+async function deleteFileFromS3(fileUrl: string, fileType: string) {
   const res = await fetch("/api/s3/client/feed", {
     method: "DELETE",
     body: JSON.stringify({
@@ -94,6 +108,12 @@ async function deleteFileFromS3(fileUrl: string) {
   if (!res.ok) {
     throw new Error("Failed to delete file");
   }
+
+  // 비디오 삭제 시 업로드 상태 초기화
+  if (fileType.startsWith("video/")) {
+    videoUploaded = false;
+  }
+
   return true;
 }
 

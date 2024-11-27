@@ -95,7 +95,7 @@ export async function createFeed(feedFormData: FormData): Promise<boolean> {
           mediaType: "IMAGE",
           assets: {
             IMAGE: {
-              mediaUrl: `video/processed/${mediaUuid}/Thumbnails/${mediaUuid}.jpg`, // 경로 지정
+              mediaUrl: `image/${mediaUuid}.jpg`, // 경로 지정
               description: file.name,
             },
           },
