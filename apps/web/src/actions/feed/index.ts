@@ -136,7 +136,7 @@ export async function createFeed(feedFormData: FormData): Promise<boolean> {
       title,
       content,
       categoryId,
-      visibility: "VISIBLE", // 항상 "VISIBLE"로 설정 (필요 시 변경 가능)
+      visibility: "VISIBLE", // 초기 "VISIBLE"로 설정
       hashtags,
       mediaList,
     };

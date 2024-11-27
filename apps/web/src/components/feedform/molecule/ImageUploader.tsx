@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from "react";
 import Image from "next/image";
 import {
@@ -13,13 +14,13 @@ import {
 
 function ImageUploader() {
   const [imagePreviews, setImagePreviews] = useState<
-    { preview: string | null; s3Url: string | null }[]
+    { preview: string | null; s3Url: string | null; fileType: string | null }[]
   >([
-    { preview: null, s3Url: null },
-    { preview: null, s3Url: null },
-    { preview: null, s3Url: null },
-    { preview: null, s3Url: null },
-  ]); // 4개의 홀더 초기화
+    { preview: null, s3Url: null, fileType: null },
+    { preview: null, s3Url: null, fileType: null },
+    { preview: null, s3Url: null, fileType: null },
+    { preview: null, s3Url: null, fileType: null },
+  ]); // 4개의 슬롯 초기화
 
   const handleFeedImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -27,9 +28,8 @@ function ImageUploader() {
     if (!files || files.length === 0) return;
 
     const file = files[0];
+    const fileType = file.type;
     const s3Url = await uploadFileToS3(file, "feed");
-
-    // console.log("Uploaded S3 URL:", s3Url);
 
     if (!s3Url) return;
 
@@ -38,21 +38,26 @@ function ImageUploader() {
       const index = prev.findIndex((item) => item.preview === null); // 첫 번째 빈 슬롯 찾기
       if (index === -1) return prev; // 빈 슬롯이 없으면 그대로 반환
       const updated = [...prev];
-      updated[index] = { preview: URL.createObjectURL(file), s3Url }; // 빈 슬롯에 이미지 추가
+      updated[index] = { preview: URL.createObjectURL(file), s3Url, fileType }; // 파일 타입 포함
       return updated;
     });
   };
 
-  const handleDeleteImage = async (s3Url: string | null, index: number) => {
+  const handleDeleteImage = async (
+    s3Url: string | null,
+    fileType: string | null,
+    index: number,
+  ) => {
     try {
-      if (s3Url) {
-        const res = await deleteFileFromS3(s3Url);
+      if (s3Url && fileType) {
+        const res = await deleteFileFromS3(s3Url, fileType);
         if (!res) throw new Error("Failed to delete from S3");
       }
+
       // 이미지 삭제 후 해당 슬롯 비우기
       setImagePreviews((prev) => {
         const updated = [...prev];
-        updated[index] = { preview: null, s3Url: null }; // 슬롯 초기화
+        updated[index] = { preview: null, s3Url: null, fileType: null }; // 슬롯 초기화
         return updated;
       });
     } catch (error) {
@@ -85,9 +90,9 @@ function ImageUploader() {
 
       {/* 이미지 미리보기 */}
       <div className="flex gap-4 mt-4 flex-wrap w-full justify-center">
-        {imagePreviews.map(({ preview, s3Url }, index) => (
+        {imagePreviews.map(({ preview, s3Url, fileType }, index) => (
           <div
-            key={s3Url || `placeholder-${index}`} // s3Url을 사용하고, 없는 경우 고유 플레이스홀더 ID 생성
+            key={s3Url || `placeholder-${index}`}
             className="relative w-[120px] h-[150px] bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 border-dashed border-2 overflow-hidden"
           >
             {preview ? (
@@ -103,7 +108,7 @@ function ImageUploader() {
                 {/* 삭제 버튼 */}
                 <button
                   type="button"
-                  onClick={() => void handleDeleteImage(s3Url, index)}
+                  onClick={() => void handleDeleteImage(s3Url, fileType, index)} // fileType 전달
                   className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white opacity-0 hover:opacity-100 transition-opacity"
                 >
                   <DeleteButton />
