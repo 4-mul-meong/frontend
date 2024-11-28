@@ -62,6 +62,7 @@ export async function getFeed(feedUuid: string): Promise<Feed> {
   console.log(result);
   return result[0];
 }
+
 // 피드폼
 export async function createFeed(feedFormData: FormData): Promise<boolean> {
   try {

@@ -13,9 +13,6 @@ export const feedFormSchema = z.object({
   tags: z
     .array(z.object({ name: z.string() })) // 태그 배열을 객체 배열로 허용
     .max(5, "태그는 최대 5개까지 입력할 수 있습니다"),
-  images: z
-    .array(z.instanceof(File))
-    .max(4, "이미지는 최대 4개까지 업로드할 수 있습니다"),
 });
 
 export type FeedFormData = z.infer<typeof feedFormSchema>;
