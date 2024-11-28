@@ -140,13 +140,13 @@ function FeedCreateFormFields() {
         {errors.tags ? <p style={{ color: "red" }}>{errors.tags}</p> : null}
       </div>
 
-      <div className="flex flex-col space-y-3">
+      <div className="flex gap-6">
         <label id="public" className="flex items-center space-x-2">
           <input
             type="radio"
             name="status"
             value="public"
-            className="h-5 w-5 border-gray-300 "
+            className="h-4 w-4 border-gray-300 "
             onChange={handleChange}
           />
           <Public width={27} height={27} />
@@ -163,7 +163,7 @@ function FeedCreateFormFields() {
             type="radio"
             name="status"
             value="hidden"
-            className="h-5 w-5 border-gray-300 "
+            className="h-4 w-4 border-gray-300 "
             onChange={handleChange}
           />
           <Private width={27} height={27} />
