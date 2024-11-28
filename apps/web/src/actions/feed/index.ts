@@ -62,8 +62,7 @@ export async function getFeed(feedUuid: string): Promise<Feed> {
   console.log(result);
   return result[0];
 }
-
-//피드폼
+// 피드폼
 export async function createFeed(feedFormData: FormData): Promise<boolean> {
   try {
     // 환경 변수 확인
@@ -75,7 +74,7 @@ export async function createFeed(feedFormData: FormData): Promise<boolean> {
     const memberUuid = (feedFormData.get("memberUuid") as string) || "unknown";
     const title = (feedFormData.get("title") as string) || "";
     const content = (feedFormData.get("content") as string) || "";
-    const categoryId = Number(feedFormData.get("categoryId")) || 0;
+    const categoryName = (feedFormData.get("categoryName") as string) || "";
 
     // tags를 해시태그 배열로 변환
     const tags = feedFormData.get("tags") as string;
@@ -135,7 +134,7 @@ export async function createFeed(feedFormData: FormData): Promise<boolean> {
       memberUuid,
       title,
       content,
-      categoryId,
+      categoryName, // 카테고리 이름
       visibility: "VISIBLE", // 초기 "VISIBLE"로 설정
       hashtags,
       mediaList,
@@ -154,6 +153,7 @@ export async function createFeed(feedFormData: FormData): Promise<boolean> {
 
     // API 응답 처리
     const { isSuccess } = (await res.json()) as CommonRes<null>;
+    // console.log(isSuccess);
     return isSuccess;
   } catch (error) {
     // console.error("Request failed:", error);

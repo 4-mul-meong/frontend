@@ -1,21 +1,3 @@
-// export interface CreateFeedType {
-//   memberUuid: string; // 회원 UUID
-//   title: string; // 피드 제목
-//   content: string; // 피드 내용
-//   categoryId: number; // 카테고리 ID
-//   hashtags: FeedHashtag[]; // 해시태그 목록
-//   mediaList: FeedMedia[]; // 미디어 목록
-// }
-
-// export interface FeedHashtag {
-//   name: string; // 해시태그 이름
-// }
-
-// export interface FeedMedia {
-//   mediaType: "IMAGE" | "VIDEO"; // 미디어 타입 (e.g., "IMAGE", "VIDEO")
-//   mediaUrl: string; // 미디어 URL
-//   description: string; // 미디어 설명
-// }
 export interface FeedHashtag {
   name: string; // 해시태그 이름
 }
@@ -44,8 +26,59 @@ export interface CreateFeedType {
   memberUuid: string; // 회원 UUID
   title: string; // 피드 제목
   content: string; // 피드 내용
-  categoryId: number; // 카테고리 ID
+  categoryName: string; // 카테고리 이름 (일반 문자열)
   visibility: "VISIBLE" | "HIDDEN"; // 공개 여부
   hashtags: FeedHashtag[]; // 해시태그 목록
   mediaList: Media[]; // 미디어 목록
 }
+
+// export interface CreateFeedType {
+//   "memberUuid": "string",
+//   "title": "string",
+//   "content": "string",
+//   "categoryName": "string",
+//   "visibility": "VISIBLE",
+//   "hashtags": [
+//     {
+//       "name": "string"
+//     }
+//   ],
+//   "mediaList": [
+//     {
+//       "mediaUuid": "string_ex0",
+//       "mediaType": "IMAGE",
+//       "assets": {
+//         "IMAGE": {
+//           "mediaUrl": "string",
+//           "description": "string"
+//         }
+//       }
+//     },
+//     {
+//       "mediaUuid": "string_ex1",
+//       "mediaType": "VIDEO",
+//       "assets": {
+//         "VIDEO_THUMBNAIL": {
+//           "mediaUrl": "string",
+//           "description": "string"
+//         },
+//         "STREAMING_360": {
+//           "mediaUrl": "string",
+//           "description": "string"
+//         },
+//         "STREAMING_540": {
+//           "mediaUrl": "string",
+//           "description": "string"
+//         },
+//         "STREAMING_720": {
+//           "mediaUrl": "string",
+//           "description": "string"
+//         },
+//         "VIDEO_MP4": {
+//           "mediaUrl": "string",
+//           "description": "string"
+//         }
+//       }
+//     }
+//   ]
+// }

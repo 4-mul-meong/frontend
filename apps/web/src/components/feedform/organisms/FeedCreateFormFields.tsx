@@ -10,7 +10,7 @@ function FeedCreateFormFields() {
     memberUuid: "",
     title: "",
     content: "",
-    categoryId: 0,
+    categoryName: "", // 기본값을 빈 문자열로 설정
     visibility: "VISIBLE", // 기본값
     hashtags: [],
     mediaList: [],
@@ -36,9 +36,9 @@ function FeedCreateFormFields() {
         ...prev,
         hashtags: updatedValue as FeedHashtag[],
       }));
-    } else if (name === "categoryId") {
-      updatedValue = parseInt(value, 10);
-      setPayload((prev) => ({ ...prev, categoryId: updatedValue as number }));
+    } else if (name === "categoryName") {
+      updatedValue = value;
+      setPayload((prev) => ({ ...prev, categoryName: updatedValue as string }));
     } else if (name === "status") {
       updatedValue = value === "public" ? "VISIBLE" : "HIDDEN";
       setPayload((prev) => ({
@@ -106,22 +106,22 @@ function FeedCreateFormFields() {
       </div>
 
       <div className="flex flex-col gap-3">
-        <label htmlFor="categoryId" className="block text-sm font-bold">
+        <label htmlFor="categoryName" className="block text-sm font-bold">
           Category
         </label>
         <select
-          id="categoryId"
-          name="categoryId"
+          id="categoryName"
+          name="categoryName"
           className="block w-full px-3 py-3 bg-[#F1F4F9] border-2 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#D4D4D4] focus:border-transparent"
           onChange={handleChange}
         >
-          <option value="0">카테고리를 선택하세요</option>
-          <option value="1">관상어</option>
-          <option value="2">장터</option>
-          <option value="3">양육일기</option>
+          <option value="">카테고리를 선택하세요</option>
+          <option value="관상어">관상어</option>
+          <option value="장터">장터</option>
+          <option value="양육일기">양육일기</option>
         </select>
-        {errors.categoryId ? (
-          <p style={{ color: "red" }}>{errors.categoryId}</p>
+        {errors.categoryName ? (
+          <p style={{ color: "red" }}>{errors.categoryName}</p>
         ) : null}
       </div>
 
