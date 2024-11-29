@@ -43,6 +43,7 @@ function ImageUploader() {
     const file = files[0];
     const fileType = file.type;
     const s3Url = await uploadFileToS3(file, "feed");
+    // console.log(s3Url);
 
     if (!s3Url) return;
 
