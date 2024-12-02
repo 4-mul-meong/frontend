@@ -42,3 +42,7 @@ export interface MemberProfile {
 export interface MemberNickNameType {
   nickname: string;
 }
+
+export interface CheckNickNameType {
+  memberUuid: string;
+}

@@ -1,10 +1,12 @@
 "use server";
-import type { MemberNickNameType } from "@/types/member";
+import type { CheckNickNameType, MemberNickNameType } from "@/types/member";
 import type { CommonRes } from "@/types/common";
+import { getHeaders, getSessionMemberUuid } from "../common";
 
 const PREFIX = "member-service";
 const API_SERVER = process.env.BASE_API_URL;
 
+// 닉네임 중복 검사
 export async function MemberNicknameCheck(data: MemberNickNameType) {
   const URI = `${API_SERVER}/${PREFIX}/v1/members/check-nickname`;
 
@@ -18,9 +20,9 @@ export async function MemberNicknameCheck(data: MemberNickNameType) {
     });
 
     if (!res.ok) {
-      // // console.error(
-      //   `[닉네임 중복 검사 실패] 상태 코드: ${res.status}, 메시지: ${res.statusText}`
-      // );
+      // // // console.error(
+      // `[닉네임 중복 검사 실패] 상태 코드: ${res.status}, 메시지: ${res.statusText}`;
+      // // );
       return {
         isSuccess: false,
         message: `API 요청 실패: ${res.status} ${res.statusText}`,
@@ -29,7 +31,6 @@ export async function MemberNicknameCheck(data: MemberNickNameType) {
 
     const responseData = (await res.json()) as CommonRes<MemberNickNameType>;
 
-    // console.log(" [닉네임 중복 검사 성공]");
     // console.log(" 응답 데이터:", responseData);
 
     // console.log("뭐오는지?", responseData);
@@ -43,5 +44,33 @@ export async function MemberNicknameCheck(data: MemberNickNameType) {
       message: "닉네임 중복 검사 중 에러가 발생했습니다.",
       error: error instanceof Error ? error.message : String(error),
     };
+  }
+}
+
+// 닉네임 조회
+export async function getMemberNickName() {
+  const memberUuid = await getSessionMemberUuid();
+  const URI = `${API_SERVER}/${PREFIX}/v1/members/${memberUuid}/nickname`;
+
+  try {
+    const headers = await getHeaders();
+
+    const res: Response = await fetch(URI, {
+      headers,
+      method: "GET",
+      cache: "no-cache",
+    });
+
+    if (!res.ok) {
+      throw new Error(`API call failed with status ${res.status}`);
+    }
+
+    const resnickname = (await res.json()) as CommonRes<CheckNickNameType>;
+
+    return resnickname;
+  } catch (error) {
+    // 사용자 친화적인 로그 메시지
+    // console.error("Failed to fetch member nickname. Please try again later.");
+    throw new Error("Error fetching member nickname.");
   }
 }
