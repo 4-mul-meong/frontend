@@ -38,3 +38,7 @@ export interface MemberProfile {
   feedCount: number;
   shortsCount: number;
 }
+
+export interface MemberNickNameType {
+  nickname: string;
+}

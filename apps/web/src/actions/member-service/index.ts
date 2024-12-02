@@ -1,5 +1,4 @@
 "use server";
-
 import { getHeaders, processResponse } from "../common";
 
 const API_SERVER = process.env.BASE_API_URL;
