@@ -46,3 +46,7 @@ export interface MemberNickNameType {
 export interface CheckNickNameType {
   memberUuid: string;
 }
+
+export interface UpdateNickNameReq {
+  nickname: string;
+}

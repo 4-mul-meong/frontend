@@ -46,8 +46,23 @@ export async function getSessionMemberUuid() {
 
 export async function getHeaders() {
   const headers = { "Content-Type": "application/json" };
+
   return {
     ...headers,
     "Member-Uuid": await getSessionMemberUuid(),
   };
+}
+
+export async function getHeadersWithAccessToken() {
+  const headers = { "Content-Type": "application/json" };
+  const session = await getServerSession(options);
+  if (session?.user) {
+    const { memberUuid, accessToken } = session.user as MemberSignInResType;
+    return {
+      ...headers,
+      "Member-Uuid": memberUuid,
+      Authorization: `Bearer ${accessToken}`,
+    };
+  }
+  return headers;
 }
