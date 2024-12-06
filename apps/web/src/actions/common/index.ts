@@ -44,6 +44,15 @@ export async function getSessionMemberUuid() {
   return "";
 }
 
+export async function getSessionIsSignUp() {
+  const session = await getServerSession(options);
+  if (session?.user) {
+    const { isSignUp } = session.user as MemberSignInResType;
+    return isSignUp;
+  }
+  return false;
+}
+
 export async function getHeaders() {
   const headers = { "Content-Type": "application/json" };
 

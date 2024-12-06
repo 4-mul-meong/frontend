@@ -1,18 +1,18 @@
-import type { NextAuthOptions } from 'next-auth';
-import KakaoProvider from 'next-auth/providers/kakao';
-import NaverProvider from 'next-auth/providers/naver';
-import type { CommonRes } from '@/types/common';
-import type { MemberSignInResType } from '@/types/member';
+import type { NextAuthOptions } from "next-auth";
+import KakaoProvider from "next-auth/providers/kakao";
+import NaverProvider from "next-auth/providers/naver";
+import type { CommonRes } from "@/types/common";
+import type { MemberSignInResType } from "@/types/member";
 
 export const options: NextAuthOptions = {
   providers: [
     KakaoProvider({
-      clientId: process.env.KAKAO_CLIENT_ID || '',
-      clientSecret: process.env.KAKAO_CLIENT_SECRET || '',
+      clientId: process.env.KAKAO_CLIENT_ID || "",
+      clientSecret: process.env.KAKAO_CLIENT_SECRET || "",
     }),
     NaverProvider({
-      clientId: process.env.NAVER_CLIENT_ID || '',
-      clientSecret: process.env.NAVER_CLIENT_SECRET || '',
+      clientId: process.env.NAVER_CLIENT_ID || "",
+      clientSecret: process.env.NAVER_CLIENT_SECRET || "",
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
@@ -20,18 +20,18 @@ export const options: NextAuthOptions = {
   callbacks: {
     async signIn({ user, account, profile }) {
       if (profile && account) {
-        // console.log(account);
+        console.log(account);
         try {
           const res = await fetch(
             `${process.env.BASE_API_URL}/member-service/v1/auth/sign-in`,
             {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
                 oauthId: account.providerAccountId,
                 oauthProvider: account.provider,
               }),
-            }
+            },
           );
 
           if (!res.ok) return false;
@@ -42,6 +42,9 @@ export const options: NextAuthOptions = {
           user.memberUuid = data.memberUuid;
           user.accessToken = data.accessToken;
           user.refreshToken = data.refreshToken;
+          user.isSignUp = data.isSignUp;
+
+          console.log(data);
 
           return true;
         } catch (error) {
@@ -106,7 +109,7 @@ export const options: NextAuthOptions = {
   },
 
   pages: {
-    signIn: '/sign-in',
-    error: '/error',
+    signIn: "/sign-in",
+    error: "/error",
   },
 };

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { signIn } from "next-auth/react";
 import {
   Bubbles,
@@ -7,14 +7,20 @@ import {
   Kitty,
   NaverButton,
 } from "@/components/common/icons";
+import { getSessionIsSignUp } from "@/actions/common";
 
 function SignInForm() {
-  const handleKakaoSignIn = () => {
-    signIn("kakao", { callbackUrl: "/" }).catch(() => null);
-  };
+  const [loading, setLoading] = useState(false);
 
-  const handleNaverSignIn = () => {
-    signIn("naver", { callbackUrl: "/" }).catch(() => null);
+  const handleSignIn = async (provider: string) => {
+    setLoading(true);
+
+    const isSignUp = await getSessionIsSignUp();
+    const redirectUrl = isSignUp ? "/sign-modal" : "/";
+
+    await signIn(provider, { callbackUrl: redirectUrl });
+
+    setLoading(false);
   };
 
   return (
@@ -39,8 +45,13 @@ function SignInForm() {
 
         <button
           type="button"
-          onClick={handleKakaoSignIn}
-          className="relative bg-[#FEE500] text-[18px] p-7 rounded-lg flex justify-center items-center gap-4 z-20"
+          onClick={() => {
+            void handleSignIn("kakao");
+          }}
+          disabled={loading}
+          className={`relative bg-[#FEE500] text-[18px] p-7 rounded-lg flex justify-center items-center gap-4 z-20 ${
+            loading ? "opacity-50 cursor-not-allowed" : ""
+          }`}
         >
           <KakaoButton />
           <span>카카오로 시작하기</span>
@@ -48,8 +59,13 @@ function SignInForm() {
 
         <button
           type="button"
-          onClick={handleNaverSignIn}
-          className="bg-[#47474A] text-[18px] text-white p-7 rounded-lg flex justify-center items-center gap-4"
+          onClick={() => {
+            void handleSignIn("naver");
+          }}
+          disabled={loading}
+          className={`bg-[#47474A] text-[18px] text-white p-7 rounded-lg flex justify-center items-center gap-4 ${
+            loading ? "opacity-50 cursor-not-allowed" : ""
+          }`}
         >
           <NaverButton />
           <span>네이버로 시작하기</span>

@@ -18,6 +18,7 @@ export interface MemberSignInResType {
   member: Member;
   accessToken: string;
   refreshToken: string;
+  isSignUp: boolean;
 }
 
 export interface MemberProfile {

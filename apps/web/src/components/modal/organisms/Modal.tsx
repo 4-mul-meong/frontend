@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { z } from "zod";
 import {
   getMemberNickName,
@@ -14,6 +15,7 @@ export default function Modal() {
   const [message, setMessage] = useState<string>(""); // 메시지
   const [isNicknameValid, setIsNicknameValid] = useState<boolean>(false); // 닉네임 유효성
   const [isOpen, setIsOpen] = useState<boolean>(true); // 모달 열림
+  const router = useRouter(); // 라우터 객체
 
   // 닉네임 중복 확인
   const handleCheckNickname = () => {
@@ -98,7 +100,8 @@ export default function Modal() {
         if (response.isSuccess) {
           setMessage("닉네임 설정이 완료되었습니다.");
           setTimeout(() => {
-            setIsOpen(false); // 닉네임 변경 성공 시 모달 닫기
+            setIsOpen(false);
+            router.push("/");
           }, 1000);
         } else {
           setMessage(
